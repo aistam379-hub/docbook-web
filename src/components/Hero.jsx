@@ -1,8 +1,10 @@
 import { useRef } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { MessageCircle, ArrowDown, WifiOff, ShieldCheck, Stethoscope } from 'lucide-react'
+import { MessageCircle, ArrowLeft, WifiOff, ShieldCheck, Stethoscope } from 'lucide-react'
 import { WHATSAPP_LINK } from '../config'
 import ScrollFrames from './ScrollFrames'
+
+const EASE = [0.22, 1, 0.36, 1]
 
 const TRUST = [
   { icon: Stethoscope, text: '٨ تخصّصات مدعومة' },
@@ -15,18 +17,23 @@ export default function Hero() {
   const reduce = useReducedMotion()
   const trackRef = useRef(null)
 
-  const container = {
-    hidden: {},
-    show: {
-      transition: { staggerChildren: reduce ? 0 : 0.09, delayChildren: 0.05 },
-    },
-  }
-  const item = reduce
-    ? { hidden: { opacity: 1 }, show: { opacity: 1 } }
-    : {
-        hidden: { opacity: 0, y: 18 },
-        show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] } },
-      }
+  // نمط الدخول: rise = opacity 0 + translateY(14) ، مع تدرّج زمني محدَّد
+  const rise = (delay, { duration = 0.9 } = {}) =>
+    reduce
+      ? { initial: false, animate: { opacity: 1, y: 0 } }
+      : {
+          initial: { opacity: 0, y: 14 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration, ease: EASE, delay },
+        }
+  const fadeIn = (delay) =>
+    reduce
+      ? { initial: false, animate: { opacity: 1 } }
+      : {
+          initial: { opacity: 0 },
+          animate: { opacity: 1 },
+          transition: { duration: 1.1, ease: EASE, delay },
+        }
 
   return (
     <section
@@ -34,59 +41,62 @@ export default function Hero() {
       ref={trackRef}
       className="relative h-[130vh] overflow-clip sm:h-[148vh] lg:h-[162vh]"
     >
-      <div className="sticky top-0 flex min-h-svh items-center overflow-hidden bg-canvas pt-16">
+      <div className="sticky top-0 flex min-h-svh items-center overflow-hidden bg-canvas pt-[74px]">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_80%_0%,theme(colors.brand.100)_0%,transparent_70%)]"
         />
 
-        <div className="mx-auto grid w-full max-w-6xl items-center gap-6 px-5 lg:grid-cols-[0.95fr_1.05fr] lg:gap-8">
-          <motion.div variants={container} initial="hidden" animate="show">
-            <motion.div variants={item}>
-              <span className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-bold text-brand-700">
-                نظام إدارة عيادة · عربي بالكامل
-              </span>
-            </motion.div>
+        <div className="mx-auto grid w-full max-w-6xl items-center gap-6 px-6 lg:grid-cols-[0.95fr_1.05fr] lg:gap-8">
+          <div>
+            <motion.span
+              {...rise(0, { duration: 0.8 })}
+              className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-bold text-brand-700"
+            >
+              نظام إدارة عيادة · عربي بالكامل
+            </motion.span>
 
             <motion.h1
-              variants={item}
-              className="mt-5 text-3xl leading-tight text-ink sm:text-4xl lg:text-[2.9rem]"
+              {...rise(0.06)}
+              className="mt-6 text-[2rem] font-medium leading-[1.14] text-ink sm:text-[2.5rem] lg:text-[3rem]"
             >
-              عيادتك كلها بمكان واحد — من حجز المريض
-              <span className="text-brand-600"> لاضبارته عند الطبيب</span>
+              <span className="block">عيادتك كلها بمكان واحد</span>
+              <span className="block">
+                من الحجز <span className="text-brand-600">لاضبارة الطبيب</span>
+              </span>
             </motion.h1>
 
             <motion.p
-              variants={item}
-              className="mt-5 max-w-xl text-base leading-relaxed text-ink-soft sm:text-lg"
+              {...rise(0.14)}
+              className="mt-6 max-w-xl text-[15px] leading-[1.8] text-ink-soft sm:text-base"
             >
               المريض يحجز بنفسه من رابط، الممرّضة تقبل وتنظّم المواعيد، والطبيب يفتح
               اضبارة جاهزة لكل مريض مع خطّ زياراته ومنحنى حالته. ويشتغل حتى والإنترنت
               مقطوع.
             </motion.p>
 
-            <motion.div variants={item} className="mt-8 flex flex-wrap items-center gap-3">
+            <motion.div {...rise(0.22)} className="mt-8 flex flex-wrap items-center gap-4">
               <a
                 href={WHATSAPP_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl bg-brand-600 px-5 py-3 text-sm font-bold text-white shadow-sm shadow-brand-600/25 transition-transform hover:scale-[1.03] active:scale-95"
+                className="inline-flex h-12 items-center gap-2 rounded-full bg-brand-600 px-6 text-[15px] font-semibold text-white shadow-sm shadow-brand-600/25 transition-transform hover:scale-[1.03] active:scale-95"
               >
                 <MessageCircle className="h-4 w-4" />
                 احجز عرض على واتساب
               </a>
               <a
                 href="#journey"
-                className="inline-flex items-center gap-2 rounded-xl border border-line bg-paper px-5 py-3 text-sm font-bold text-ink transition-colors hover:border-brand-300 hover:text-brand-700"
+                className="inline-flex items-center gap-1.5 text-[15px] font-medium text-ink transition-colors hover:text-brand-700"
               >
                 شوف كيف يعمل
-                <ArrowDown className="h-4 w-4" />
+                <ArrowLeft className="h-4 w-4" />
               </a>
             </motion.div>
 
             <motion.ul
-              variants={item}
-              className="mt-9 flex flex-wrap gap-x-5 gap-y-2 text-xs font-medium text-ink-soft"
+              {...fadeIn(0.34)}
+              className="mt-10 flex flex-wrap gap-x-5 gap-y-2 text-xs font-medium text-ink-faint"
             >
               {TRUST.map(({ icon: Icon, text }) => (
                 <li key={text} className="inline-flex items-center gap-1.5">
@@ -95,12 +105,10 @@ export default function Hero() {
                 </li>
               ))}
             </motion.ul>
-          </motion.div>
+          </div>
 
           <motion.div
-            initial={reduce ? false : { opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+            {...fadeIn(0.15)}
             className="order-first h-[36vh] sm:h-[44vh] lg:order-none lg:h-[62vh]"
           >
             <ScrollFrames trackRef={trackRef} />
