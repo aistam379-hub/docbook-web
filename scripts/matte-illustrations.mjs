@@ -9,18 +9,23 @@ const SRC = 'C:/Users/cd/Desktop/docbook-site'
 const OUT = 'src/assets/illustrations'
 mkdirSync(OUT, { recursive: true })
 
+// [file, name, modulate?] — modulate يطابق التركوازي الأغمق للطقم الثاني مع #0d9488
+const CM = { hue: -7, saturation: 1.08, brightness: 1.03 }
 const MAP = [
   ['docbook-illustration-05-patient-booking.png', 'booking'],
   ['docbook-illustration-02-appointments.png', 'appointments'],
   ['docbook-illustration-04-teamwork.png', 'teamwork'],
   ['docbook-illustration-03-patient-file.png', 'privacy'],
   ['docbook-illustration-01-chaos-to-order.png', 'chaos'],
+  ['_ill2/docbook-illustration-06-specialties.png', 'specialties', CM],
+  ['_ill2/docbook-illustration-07-offline.png', 'offline', CM],
+  ['_ill2/docbook-illustration-08-onboarding.png', 'onboarding', CM],
 ]
 
 const TOL = 34
 const FEATHER = 26
 
-for (const [file, name] of MAP) {
+for (const [file, name, modulate] of MAP) {
   const img = await Jimp.read(`${SRC}/${file}`)
   const { data, width: w, height: h } = img.bitmap
   const N = w * h
@@ -69,7 +74,9 @@ for (const [file, name] of MAP) {
     }
   for (let p = 0; p < N; p++) data[p * 4 + 3] = sm[p]
 
-  const info = await sharp(Buffer.from(data), { raw: { width: w, height: h, channels: 4 } })
+  let pipe = sharp(Buffer.from(data), { raw: { width: w, height: h, channels: 4 } })
+  if (modulate) pipe = pipe.modulate(modulate)
+  const info = await pipe
     .trim({ threshold: 6 })
     .resize({ width: 1400, withoutEnlargement: true })
     .webp({ quality: 86, alphaQuality: 100, effort: 5 })

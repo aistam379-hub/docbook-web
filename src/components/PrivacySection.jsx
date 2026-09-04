@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { Database, Lock, EyeOff, WifiOff } from 'lucide-react'
+import illustration from '../assets/illustrations/offline.webp'
 
 const EASE = [0.16, 1, 0.3, 1]
 
@@ -51,7 +52,22 @@ export default function PrivacySection() {
           </p>
         </motion.div>
 
-        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <motion.div
+          initial={reduce ? false : { opacity: 0, y: 24, scale: 0.98 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease: EASE }}
+          className="mx-auto mt-10 max-w-xs rounded-3xl bg-white/95 p-5 shadow-xl shadow-black/20 sm:max-w-sm"
+        >
+          <img
+            src={illustration}
+            alt="جهاز الطبيب يشتغل والإنترنت مقطوع ويتزامن لمّا يرجع"
+            className="w-full"
+            loading="lazy"
+          />
+        </motion.div>
+
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {CARDS.map(({ icon: Icon, title, body }, i) => (
             <motion.div
               key={title}

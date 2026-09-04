@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { MessageCircle, Settings2, LogIn, Share2 } from 'lucide-react'
 import { WHATSAPP_LINK } from '../config'
+import illustration from '../assets/illustrations/onboarding.webp'
 
 const EASE = [0.16, 1, 0.3, 1]
 
@@ -43,7 +44,18 @@ export default function StartSection() {
           </p>
         </div>
 
-        <ol className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <motion.img
+          src={illustration}
+          alt="من رسالة واتساب، لتجهيز نسختك، لدخولك، لمشاركة رابط الحجز مع مرضاك"
+          className="mx-auto mt-10 hidden w-full max-w-3xl sm:block"
+          loading="lazy"
+          initial={reduce ? false : { opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.6, ease: EASE }}
+        />
+
+        <ol className="mt-10 grid gap-6 sm:mt-12 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map(({ icon: Icon, title, body }, i) => (
             <motion.li
               key={title}

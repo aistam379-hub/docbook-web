@@ -84,13 +84,31 @@ export default function ScrollFrames({
     ctx.clearRect(0, 0, cssW, cssH)
     const iw = img.naturalWidth
     const ih = img.naturalHeight
-    const scale =
-      fit === 'cover'
-        ? Math.max(cssW / iw, cssH / ih)
-        : Math.min(cssW / iw, cssH / ih)
-    const dw = iw * scale
-    const dh = ih * scale
-    ctx.drawImage(img, (cssW - dw) / 2, (cssH - dh) * focusY, dw, dh)
+    const portrait = fit === 'cover' && cssH > cssW
+
+    let dx, dy, dw, dh
+    if (portrait) {
+      // موبايل: أصغر شوي من cover الكامل، ومرفوعة لفوق
+      const scale = Math.max(cssW / iw, cssH / ih) * 0.86
+      dw = iw * scale
+      dh = ih * scale
+      dx = (cssW - dw) / 2
+      dy = (cssH - dh) * 0.3
+    } else if (fit === 'cover') {
+      // ديسكتوب: cover مع طلوع بسيط زيادة، مزاحة قليلاً لليسار
+      const scale = Math.max(cssW / iw, cssH / ih) * 1.08
+      dw = iw * scale
+      dh = ih * scale
+      dx = (cssW - dw) / 2 - cssW * 0.045
+      dy = (cssH - dh) * focusY
+    } else {
+      const scale = Math.min(cssW / iw, cssH / ih)
+      dw = iw * scale
+      dh = ih * scale
+      dx = (cssW - dw) / 2
+      dy = (cssH - dh) * focusY
+    }
+    ctx.drawImage(img, dx, dy, dw, dh)
     drawnRef.current = index
   }
 

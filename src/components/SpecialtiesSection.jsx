@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Activity } from 'lucide-react'
+import illustration from '../assets/illustrations/specialties.webp'
 
 const EASE = [0.16, 1, 0.3, 1]
 
@@ -132,6 +133,17 @@ export default function SpecialtiesSection() {
             للتعديل. اختر تخصّصاً لتشوف.
           </p>
         </div>
+
+        <motion.img
+          src={illustration}
+          alt="ملف مريض واحد تتفرّع منه أدوات كل تخصّص — نمو، ضغط عين، أسنان، حمل، ضغط دم"
+          className="mx-auto mt-10 w-full max-w-2xl"
+          loading="lazy"
+          initial={reduce ? false : { opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease: EASE }}
+        />
 
         {/* مبدّل التخصّص */}
         <div className="mt-8 flex flex-wrap justify-center gap-2">

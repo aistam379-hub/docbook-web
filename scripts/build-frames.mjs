@@ -8,8 +8,8 @@ import { join } from 'node:path'
 
 const SRC = process.argv[2] || 'C:/Users/cd/Desktop/docbook-site/_hnew'
 const OUT = process.argv[3] || 'public/docbook_frames_240'
-const OUT_W = 1200
-const Q = 76
+const OUT_W = 1600
+const Q = 82
 
 rmSync(OUT, { recursive: true, force: true })
 mkdirSync(OUT, { recursive: true })
