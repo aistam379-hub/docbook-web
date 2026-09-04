@@ -3,6 +3,7 @@ import Hero from './components/Hero'
 import PatientJourney from './components/PatientJourney'
 import BookingSection from './components/BookingSection'
 import NurseSection from './components/NurseSection'
+import HandoffStrip from './components/HandoffStrip'
 import DoctorSection from './components/DoctorSection'
 import PrivacySection from './components/PrivacySection'
 import SpecialtiesSection from './components/SpecialtiesSection'
@@ -19,6 +20,7 @@ function App() {
         <PatientJourney />
         <BookingSection />
         <NurseSection />
+        <HandoffStrip />
         <DoctorSection />
         <PrivacySection />
         <SpecialtiesSection />
