@@ -10,7 +10,12 @@ const framePath = (i) =>
  * - كل الفريمات بنفس القصّ الثابت → صفر اهتزاز في الموضع.
  * - مؤشّر الفريم يُنعَّم بـ lerp داخل حلقة rAF → لا قفز عند السكرول السريع.
  */
-export default function ScrollFrames({ trackRef, className = '' }) {
+export default function ScrollFrames({
+  trackRef,
+  className = '',
+  fit = 'contain',
+  focusY = 0.5,
+}) {
   const canvasRef = useRef(null)
   const framesRef = useRef([])
   const loadedRef = useRef(null)
@@ -79,10 +84,13 @@ export default function ScrollFrames({ trackRef, className = '' }) {
     ctx.clearRect(0, 0, cssW, cssH)
     const iw = img.naturalWidth
     const ih = img.naturalHeight
-    const scale = Math.min(cssW / iw, cssH / ih) // contain
+    const scale =
+      fit === 'cover'
+        ? Math.max(cssW / iw, cssH / ih)
+        : Math.min(cssW / iw, cssH / ih)
     const dw = iw * scale
     const dh = ih * scale
-    ctx.drawImage(img, (cssW - dw) / 2, (cssH - dh) / 2, dw, dh)
+    ctx.drawImage(img, (cssW - dw) / 2, (cssH - dh) * focusY, dw, dh)
     drawnRef.current = index
   }
 
@@ -140,7 +148,7 @@ export default function ScrollFrames({ trackRef, className = '' }) {
   return (
     <canvas
       ref={canvasRef}
-      className={`block h-full w-full mix-blend-multiply ${className}`}
+      className={`block h-full w-full ${className}`}
       aria-hidden="true"
     />
   )

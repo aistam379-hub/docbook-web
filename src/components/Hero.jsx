@@ -17,7 +17,6 @@ export default function Hero() {
   const reduce = useReducedMotion()
   const trackRef = useRef(null)
 
-  // نمط الدخول: rise = opacity 0 + translateY(14) ، مع تدرّج زمني محدَّد
   const rise = (delay, { duration = 0.9 } = {}) =>
     reduce
       ? { initial: false, animate: { opacity: 1, y: 0 } }
@@ -39,26 +38,46 @@ export default function Hero() {
     <section
       id="top"
       ref={trackRef}
-      className="relative h-[130vh] overflow-clip sm:h-[148vh] lg:h-[162vh]"
+      className="relative h-[132vh] overflow-clip sm:h-[150vh] lg:h-[166vh]"
     >
-      <div className="sticky top-0 flex min-h-svh items-center overflow-hidden bg-canvas pt-[74px]">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_80%_0%,theme(colors.brand.100)_0%,transparent_70%)]"
+      <div className="sticky top-0 h-svh overflow-hidden bg-white">
+        {/* الأنيميشن — ملء الشاشة، خلفية */}
+        <ScrollFrames
+          trackRef={trackRef}
+          fit="cover"
+          focusY={0.42}
+          className="absolute inset-0"
         />
 
-        <div className="mx-auto grid w-full max-w-6xl items-center gap-6 px-6 lg:grid-cols-[0.95fr_1.05fr] lg:gap-8">
-          <div>
+        {/* تدرّج جانبي (ديسكتوب): أبيض كثيف على اليمين خلف النص، يصفو لليسار */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 hidden bg-[linear-gradient(to_left,#fff_0%,#fff_28%,rgba(255,255,255,0.78)_46%,rgba(255,255,255,0)_74%)] lg:block"
+        />
+        {/* تدرّج سفلي (كل المقاسات): يذوّب القسم بالتالي */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0)_52%,rgba(255,255,255,0.55)_76%,#fff_100%)]"
+        />
+        {/* تدرّج الموبايل: نصف سفلي أبيض قوي ليقرأ النص فوقه */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,#fff_0%,#fff_32%,rgba(255,255,255,0.85)_48%,rgba(255,255,255,0.25)_76%,rgba(255,255,255,0)_100%)] lg:hidden"
+        />
+
+        {/* المحتوى */}
+        <div className="relative mx-auto flex h-full max-w-6xl items-end px-6 pb-14 pt-[74px] lg:items-center lg:pb-0">
+          <div className="w-full text-center lg:max-w-[54%] lg:text-right">
             <motion.span
               {...rise(0, { duration: 0.8 })}
-              className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-bold text-brand-700"
+              className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50/80 px-3 py-1 text-xs font-bold text-brand-700 backdrop-blur-sm"
             >
               نظام إدارة عيادة · عربي بالكامل
             </motion.span>
 
             <motion.h1
               {...rise(0.06)}
-              className="mt-6 text-[2rem] font-medium leading-[1.14] text-ink sm:text-[2.5rem] lg:text-[3rem]"
+              className="mt-5 text-[1.6rem] font-medium leading-[1.16] text-ink sm:text-[2.2rem] lg:mt-6 lg:text-[3rem]"
             >
               <span className="block">عيادتك كلها بمكان واحد</span>
               <span className="block">
@@ -68,14 +87,16 @@ export default function Hero() {
 
             <motion.p
               {...rise(0.14)}
-              className="mt-6 max-w-xl text-[15px] leading-[1.8] text-ink-soft sm:text-base"
+              className="mx-auto mt-5 max-w-md text-[14px] leading-[1.75] text-ink-soft sm:text-[15px] lg:mx-0 lg:mt-6 lg:max-w-xl lg:text-base"
             >
-              المريض يحجز بنفسه من رابط، الممرّضة تقبل وتنظّم المواعيد، والطبيب يفتح
-              اضبارة جاهزة لكل مريض مع خطّ زياراته ومنحنى حالته. ويشتغل حتى والإنترنت
-              مقطوع.
+              المريض يحجز بنفسه من رابط، الممرّضة تنظّم المواعيد، والطبيب يفتح اضبارة
+              جاهزة لكل مريض. ويشتغل حتى والإنترنت مقطوع.
             </motion.p>
 
-            <motion.div {...rise(0.22)} className="mt-8 flex flex-wrap items-center gap-4">
+            <motion.div
+              {...rise(0.22)}
+              className="mt-7 flex flex-wrap items-center justify-center gap-4 lg:mt-8 lg:justify-start"
+            >
               <a
                 href={WHATSAPP_LINK}
                 target="_blank"
@@ -96,7 +117,7 @@ export default function Hero() {
 
             <motion.ul
               {...fadeIn(0.34)}
-              className="mt-10 flex flex-wrap gap-x-5 gap-y-2 text-xs font-medium text-ink-faint"
+              className="mt-8 hidden flex-wrap gap-x-5 gap-y-2 text-xs font-medium text-ink-faint sm:flex lg:justify-start"
             >
               {TRUST.map(({ icon: Icon, text }) => (
                 <li key={text} className="inline-flex items-center gap-1.5">
@@ -106,13 +127,6 @@ export default function Hero() {
               ))}
             </motion.ul>
           </div>
-
-          <motion.div
-            {...fadeIn(0.15)}
-            className="order-first h-[36vh] sm:h-[44vh] lg:order-none lg:h-[62vh]"
-          >
-            <ScrollFrames trackRef={trackRef} />
-          </motion.div>
         </div>
       </div>
     </section>
