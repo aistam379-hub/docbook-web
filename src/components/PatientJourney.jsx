@@ -237,7 +237,9 @@ export default function PatientJourney() {
               ref={(el) => (slides.current[i] = el)}
               aria-roledescription="slide"
               aria-label={`المحطّة ${i + 1} من ${STAGES.length}`}
-              className="w-[86%] shrink-0 snap-center sm:w-[340px] lg:w-[370px]"
+              className={`w-[86%] shrink-0 snap-center transition-all duration-500 sm:w-[340px] lg:w-[370px] ${
+                i === step ? 'blur-0 opacity-100' : 'scale-[0.92] opacity-50 blur-[3px]'
+              }`}
             >
               <JourneyCard
                 s={s}
