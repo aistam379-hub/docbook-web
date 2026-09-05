@@ -14,10 +14,10 @@ import {
 import BookingScreen from './journey-screens/BookingScreen'
 import NurseRequestScreen from './journey-screens/NurseRequestScreen'
 import NurseDecisionScreen from './journey-screens/NurseDecisionScreen'
+import DoctorProfileScreen from './journey-screens/DoctorProfileScreen'
+import DoctorVisitScreen from './journey-screens/DoctorVisitScreen'
 import './journey-screens/screens.css'
 import calendarImg from '../assets/journey/calendar.webp'
-import chartImg from '../assets/journey/chart.webp'
-import visitImg from '../assets/journey/visit.webp'
 
 const STAGES = [
   {
@@ -52,14 +52,14 @@ const STAGES = [
   {
     hat: 'الطبيب',
     icon: FolderOpen,
-    img: chartImg,
+    screen: <DoctorProfileScreen />,
     title: 'الاضبارة تُفتح عند الطبيب',
     body: 'تسجيل الزيارة يفتح اضبارة المريض على شاشة الطبيب تلقائياً — معلوماته وأرشيف زياراته أمامه، بلا مناداة ولا ورق.',
   },
   {
     hat: 'الطبيب',
     icon: Activity,
-    img: visitImg,
+    screen: <DoctorVisitScreen />,
     title: 'يعاين ويكتب — والحالة تُرسم',
     body: 'شكوى، فحص، تشخيص، وصفة، تحاليل، وحقول تخصّصه. كل زيارة تتراكم فتبني خطّاً زمنياً ومنحنى يوضّح تطوّر الحالة.',
   },
@@ -284,7 +284,7 @@ export default function PatientJourney() {
           role="group"
           aria-roledescription="carousel"
           aria-label="رحلة المريض"
-          className="mt-10 flex snap-x snap-mandatory items-stretch gap-4 overflow-x-auto pb-3 outline-none [-ms-overflow-style:none] [scrollbar-width:none] focus-visible:ring-2 focus-visible:ring-brand-400 [&::-webkit-scrollbar]:hidden"
+          className="mt-10 flex snap-x snap-mandatory items-stretch gap-4 overflow-x-auto px-[7%] pb-3 outline-none [-ms-overflow-style:none] [scrollbar-width:none] focus-visible:ring-2 focus-visible:ring-brand-400 sm:px-[max(0px,calc((100%-340px)/2))] lg:px-[calc((100%-370px)/2)] [&::-webkit-scrollbar]:hidden"
         >
           {STAGES.map((s, i) => (
             <article

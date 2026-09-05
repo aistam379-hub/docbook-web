@@ -252,6 +252,255 @@
   color: var(--primary);
 }
 
+/* ================================================================
+   لوحة الطبيب — بطاقة معلومات المريض + محرّر الزيارة (SOAP)
+   مقتبس من simple/doctor/{app.html, script.js, styles.css}
+================================================================ */
+
+.dbx-screen .glass-card {
+  background: var(--surface);
+  border: 1px solid rgba(15, 23, 42, 0.04);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(17, 24, 39, 0.06), 0 8px 16px -4px rgba(17, 24, 39, 0.12);
+}
+.dbx-screen .pf-cardhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.dbx-screen .pf-cardhead h4 {
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.dbx-screen .pf-editbtn {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid #115e59;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.76rem;
+  border-radius: 8px;
+  padding: 5px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.dbx-screen .pf-editbtn svg {
+  color: #115e59;
+}
+.dbx-screen .pf-tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.dbx-screen .pf-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  background: var(--bg);
+  border: 1px solid rgba(15, 23, 42, 0.05);
+  border-radius: 12px;
+  padding: 11px 13px;
+}
+.dbx-screen .pf-tile .lab {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.dbx-screen .pf-tile .lab svg {
+  width: 13px;
+  height: 13px;
+  color: var(--primary);
+}
+.dbx-screen .pf-tile .val {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.35;
+  word-break: break-word;
+}
+.dbx-screen .pf-tile .val.empty {
+  font-weight: 500;
+  color: var(--text-muted);
+}
+.dbx-screen .pf-tile.full {
+  grid-column: 1 / -1;
+}
+.dbx-screen .pf-alertline {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  padding: 3px 0 9px;
+}
+.dbx-screen .pf-alerttag {
+  background: #dc2626;
+  color: #fff;
+  font-size: 0.64rem;
+  font-weight: 800;
+  border-radius: 6px;
+  padding: 3px 10px;
+  flex-shrink: 0;
+}
+.dbx-screen .pf-alerttext {
+  font-size: 0.88rem;
+  color: var(--text);
+  font-weight: 700;
+  line-height: 1.5;
+}
+.dbx-screen .pf-alerttext b {
+  color: #dc2626;
+  font-weight: 800;
+}
+
+/* ── محرّر الزيارة (SOAP) ── */
+.dbx-screen .ve-soap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.dbx-screen .ve-step {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 12px;
+}
+.dbx-screen .ve-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.dbx-screen .ve-mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 800;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.dbx-screen .ve-line {
+  width: 1.5px;
+  flex: 1;
+  min-height: 14px;
+  background: var(--border);
+  border-radius: 1px;
+}
+.dbx-screen .ve-step:last-child .ve-line {
+  display: none;
+}
+.dbx-screen .ve-step.filled .ve-mark {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+.dbx-screen .ve-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 1px 2px rgba(17, 24, 39, 0.05);
+}
+.dbx-screen .ve-step.filled .ve-card {
+  border-inline-start: 2.5px solid var(--primary);
+}
+.dbx-screen .ve-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 0.86rem;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.dbx-screen .ve-value {
+  font-size: 0.92rem;
+  color: var(--text);
+  line-height: 1.85;
+  border-bottom: 1px solid var(--border);
+  padding: 7px 2px;
+}
+.dbx-screen .ve-value.ph {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.dbx-screen .ve-measures {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.dbx-screen .ve-measure {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 9px;
+}
+.dbx-screen .ve-measure .mk {
+  font-size: 0.66rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.dbx-screen .ve-measure .mv {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.dbx-screen .ve-prev {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.dbx-screen .ve-prev-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 13px;
+  background: var(--bg);
+  font-size: 0.8rem;
+}
+.dbx-screen .ve-prev-top b {
+  color: var(--text);
+}
+.dbx-screen .ve-prev-top .when {
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-inline-start: 6px;
+}
+.dbx-screen .ve-send-btn {
+  width: 100%;
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1.5px solid var(--border-strong);
+  border-radius: 10px;
+  padding: 11px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
 /* ── شريط الخطوات ── */
 .dbx-screen .booking-steps-bar {
   display: flex;
