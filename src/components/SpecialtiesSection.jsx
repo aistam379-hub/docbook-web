@@ -10,7 +10,9 @@ import {
   Stethoscope,
   Hand,
   Bone,
+  MessageCircle,
 } from 'lucide-react'
+import { WHATSAPP_LINK } from '../config'
 
 const EASE = [0.16, 1, 0.3, 1]
 
@@ -81,6 +83,45 @@ const SPECIALTIES = [
   },
 ]
 
+const ROWS = [
+  [0, 1, 2],
+  [3, 4],
+  [5, 6, 7],
+]
+
+function SpecialtyCard({ sp, active, onClick }) {
+  const Icon = sp.icon
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={`relative flex size-[76px] flex-col items-center justify-center gap-1 rounded-xl bg-paper transition-transform duration-300 sm:size-20 ${
+        active ? '-translate-y-1' : 'hover:-translate-y-0.5'
+      }`}
+    >
+      <div
+        role="presentation"
+        className={`absolute inset-0 rounded-xl border transition-colors ${
+          active
+            ? 'border-brand-500 shadow-xl shadow-brand-600/20'
+            : 'border-black/15 hover:border-brand-300'
+        }`}
+      />
+      <span className={`relative z-20 ${active ? 'text-brand-700' : 'text-ink-soft'}`}>
+        <Icon className="size-7" strokeWidth={2} />
+      </span>
+      <span
+        className={`relative z-20 text-[10px] font-bold leading-none ${
+          active ? 'text-brand-700' : 'text-ink-faint'
+        }`}
+      >
+        {sp.key}
+      </span>
+    </button>
+  )
+}
+
 function ToolCard({ s }) {
   return (
     <div className="group rounded-2xl border border-line bg-paper p-5 shadow-sm shadow-slate-200/40 transition-all duration-300 hover:-translate-y-1 hover:border-brand-200 hover:shadow-lg hover:shadow-brand-600/10">
@@ -135,87 +176,82 @@ export default function SpecialtiesSection() {
   const [i, setI] = useState(0)
   const s = SPECIALTIES[i]
 
-  const rows = [
-    { start: 0, items: SPECIALTIES.slice(0, 3) },
-    { start: 3, items: SPECIALTIES.slice(3, 5) },
-    { start: 5, items: SPECIALTIES.slice(5, 8) },
-  ]
-
   return (
-    <section id="specialties" className="scroll-mt-16 border-t border-line/70 py-20 sm:py-28">
-      <div className="mx-auto max-w-5xl px-5">
-        <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-          {/* النص */}
-          <div className="text-center lg:text-right">
-            <span className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-bold text-brand-700">
-              التخصصات
-            </span>
-            <h2 className="mt-4 text-2xl text-ink sm:text-3xl">
-              النظام يتقولب على تخصّصك — مش العكس
-            </h2>
-            <p className="mt-3 text-sm leading-relaxed text-ink-soft sm:text-base">
-              ٨ تخصّصات، كل واحد بخاناته وأداته السريرية الجاهزة من أوّل دخول — قابلة
-              للتعديل. اختر تخصّصاً لتشوف تفاصيله.
-            </p>
-          </div>
-
-          {/* عنقود التخصصات */}
-          <div className="mx-auto w-fit" role="group" aria-label="اختيار التخصّص">
-            {rows.map((row, r) => (
+    <section id="specialties" className="scroll-mt-16 border-t border-line/70">
+      <div className="bg-paper py-20 sm:py-28">
+        <div className="mx-auto max-w-5xl px-6">
+          <div className="grid items-center gap-12 sm:grid-cols-2">
+            {/* عنقود التخصصات */}
+            <div className="relative mx-auto w-fit">
               <div
-                key={r}
-                className={`flex justify-center gap-2 sm:gap-3 ${r > 0 ? 'mt-2 sm:mt-3' : ''}`}
-              >
-                {row.items.map((sp, k) => {
-                  const idx = row.start + k
-                  const Icon = sp.icon
-                  const active = idx === i
-                  return (
-                    <button
-                      key={sp.key}
-                      type="button"
+                aria-hidden
+                className="pointer-events-none absolute inset-0 z-10"
+                style={{
+                  background:
+                    'radial-gradient(circle at 50% 50%, transparent 62%, rgba(255,255,255,0.55) 95%)',
+                }}
+              />
+              {ROWS.map((row, r) => (
+                <div
+                  key={r}
+                  className={`mx-auto flex w-fit justify-center gap-2 ${r ? 'mt-2' : ''}`}
+                >
+                  {row.map((idx) => (
+                    <SpecialtyCard
+                      key={SPECIALTIES[idx].key}
+                      sp={SPECIALTIES[idx]}
+                      active={i === idx}
                       onClick={() => setI(idx)}
-                      aria-pressed={active}
-                      className={`group flex size-[72px] flex-col items-center justify-center gap-1 rounded-xl border transition-all duration-300 sm:size-20 ${
-                        active
-                          ? 'border-brand-500 bg-brand-50 text-brand-700 shadow-md shadow-brand-600/15'
-                          : 'border-line bg-paper text-ink-soft hover:-translate-y-0.5 hover:border-brand-300 hover:text-brand-700 hover:shadow-sm'
-                      }`}
-                    >
-                      <Icon
-                        className={`h-6 w-6 transition-transform duration-300 ${
-                          active ? '' : 'group-hover:scale-110'
-                        }`}
-                        strokeWidth={2}
-                      />
-                      <span className="text-[10px] font-bold leading-none">{sp.key}</span>
-                    </button>
-                  )
-                })}
-              </div>
-            ))}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            {/* النص */}
+            <div className="mx-auto max-w-lg space-y-5 text-center sm:text-right">
+              <span className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-bold text-brand-700">
+                التخصصات
+              </span>
+              <h2 className="text-balance text-3xl font-semibold text-ink md:text-4xl">
+                النظام يتقولب على تخصّصك — مش العكس
+              </h2>
+              <p className="text-ink-soft">
+                ٨ تخصّصات، كل واحد بخاناته وأداته السريرية الجاهزة من أوّل دخول — قابلة
+                للتعديل. اضغط تخصّصاً لتشوف تفاصيله تحت.
+              </p>
+              <a
+                href={WHATSAPP_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-md border border-line bg-paper px-4 py-2 text-sm font-bold text-ink-soft transition-colors hover:border-brand-300 hover:text-brand-700"
+              >
+                <MessageCircle className="h-4 w-4" />
+                اسأل عن تخصّصك
+              </a>
+            </div>
           </div>
-        </div>
 
-        {/* البطاقة */}
-        <div className="mx-auto mt-10 max-w-2xl">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={s.key}
-              initial={reduce ? false : { opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
-              transition={{ duration: 0.3, ease: EASE }}
-            >
-              <ToolCard s={s} />
-            </motion.div>
-          </AnimatePresence>
-        </div>
+          {/* بطاقة التفاصيل */}
+          <div className="mx-auto mt-14 max-w-2xl">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={s.key}
+                initial={reduce ? false : { opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
+                transition={{ duration: 0.3, ease: EASE }}
+              >
+                <ToolCard s={s} />
+              </motion.div>
+            </AnimatePresence>
+          </div>
 
-        <p className="mt-6 text-center text-[13px] text-ink-faint">
-          كمان: <span className="font-bold text-ink-soft">الأرشيف الجراحي</span> (يربط موعد
-          العملية بالزيارة) متاح لأي تخصّص.
-        </p>
+          <p className="mt-6 text-center text-[13px] text-ink-faint">
+            كمان: <span className="font-bold text-ink-soft">الأرشيف الجراحي</span> (يربط موعد
+            العملية بالزيارة) متاح لأي تخصّص.
+          </p>
+        </div>
       </div>
     </section>
   )

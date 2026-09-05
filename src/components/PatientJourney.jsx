@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { useState } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
 import {
   User,
   ClipboardList,
@@ -8,8 +8,6 @@ import {
   DoorOpen,
   FolderOpen,
   Activity,
-  ArrowLeft,
-  ArrowRight,
   Check,
 } from 'lucide-react'
 import mark from '../assets/brand/docbook-mark.png'
@@ -22,7 +20,7 @@ const EASE = [0.16, 1, 0.3, 1]
 
 function Frame({ label, children }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-line bg-paper shadow-xl shadow-slate-300/30 ring-1 ring-black/[0.03]">
+    <div className="overflow-hidden rounded-[24px] border border-line bg-paper shadow-2xl shadow-slate-300/40 ring-1 ring-black/[0.03]">
       <div className="flex items-center gap-2 border-b border-line px-3 py-2.5">
         <img src={mark} alt="" className="h-5 w-5 rounded-md" />
         <span className="text-[11px] font-bold text-ink-soft">{label}</span>
@@ -196,7 +194,8 @@ function HandoffScreen({ reduce }) {
         </div>
         <motion.div
           initial={reduce ? false : { opacity: 0, y: 10, scale: 0.96 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true }}
           transition={{ duration: 0.5, ease: EASE, delay: 0.1 }}
           className="absolute inset-x-0 top-6 mx-auto flex w-[92%] items-center gap-2 rounded-xl border border-brand-200 bg-white p-3 shadow-lg shadow-brand-600/10"
         >
@@ -261,7 +260,8 @@ function ChartScreen({ reduce }) {
               r="4"
               fill="#0d9488"
               initial={reduce ? false : { scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              viewport={{ once: true }}
               transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}
               style={{ transformOrigin: '190px 24px' }}
             />
@@ -290,9 +290,143 @@ function Screen({ step, choice, reduce }) {
   }
 }
 
+function BranchButtons({ choice, setChoice }) {
+  return (
+    <div className="w-full">
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => setChoice('accept')}
+          className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-bold transition-all active:scale-95 ${
+            choice === 'accept'
+              ? 'bg-brand-600 text-white shadow-sm shadow-brand-600/25'
+              : 'border border-line bg-paper text-ink hover:border-brand-300'
+          }`}
+        >
+          <CalendarCheck className="h-4 w-4" /> تقبل الموعد
+        </button>
+        <button
+          type="button"
+          onClick={() => setChoice('apologize')}
+          className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-bold transition-all active:scale-95 ${
+            choice === 'apologize'
+              ? 'bg-amber-500 text-white shadow-sm shadow-amber-500/25'
+              : 'border border-line bg-paper text-ink hover:border-amber-300'
+          }`}
+        >
+          <CalendarX2 className="h-4 w-4" /> تعتذر + مواعيد تعويض
+        </button>
+      </div>
+      {choice && (
+        <p className="mt-3 rounded-lg bg-canvas px-3 py-2 text-[13px] leading-relaxed text-ink-soft">
+          {choice === 'accept'
+            ? 'يتثبّت الموعد بالروزنامة، وتُرسل رسالة تأكيد للمريض عبر واتساب أو SMS بنصّ تعدّله العيادة.'
+            : 'تُرسل رسالة اعتذار مع مواعيد تعويض بديلة تختارها الممرّضة من الروزنامة — والمريض يختار المناسب له.'}
+        </p>
+      )}
+    </div>
+  )
+}
+
 /* ————————————————————————————————————————————
-   المحطّات
+   قسم مع موك متراكب — منقول من البرومت (section-with-mockup) بهوية DocBook
 ———————————————————————————————————————————— */
+
+function SectionWithMockup({ hat, HatIcon, station, title, description, branch, reverseLayout, children }) {
+  const reduce = useReducedMotion()
+
+  const containerVariants = {
+    hidden: {},
+    visible: { transition: { staggerChildren: 0.2 } },
+  }
+  const itemVariants = reduce
+    ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
+    : {
+        hidden: { opacity: 0, y: 50 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: 'easeOut' } },
+      }
+
+  const layoutClasses = reverseLayout
+    ? 'md:grid-cols-2 md:grid-flow-col-dense'
+    : 'md:grid-cols-2'
+  const textOrderClass = reverseLayout ? 'md:col-start-2' : ''
+  const imageOrderClass = reverseLayout ? 'md:col-start-1' : ''
+
+  return (
+    <div className="relative py-14 md:py-20">
+      <div className="mx-auto w-full max-w-[1120px] px-6 md:px-10">
+        <motion.div
+          className={`grid grid-cols-1 items-center gap-14 md:gap-10 ${layoutClasses}`}
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          {/* النص */}
+          <motion.div
+            className={`mx-auto flex w-full max-w-[520px] flex-col items-start gap-4 md:mx-0 ${textOrderClass}`}
+            variants={itemVariants}
+          >
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-3 py-1 text-[11px] font-bold text-white">
+              <HatIcon className="h-3.5 w-3.5" />
+              {hat} · المحطّة {station}
+            </div>
+            <h2 className="text-2xl font-semibold leading-tight text-ink md:text-[34px] md:leading-[1.2]">
+              {title}
+            </h2>
+            <p className="text-sm leading-6 text-ink-soft md:text-[15px]">{description}</p>
+            {branch}
+          </motion.div>
+
+          {/* الموك المتراكب */}
+          <motion.div
+            className={`relative mx-auto w-full max-w-[300px] md:max-w-[430px] ${imageOrderClass}`}
+            variants={itemVariants}
+          >
+            {/* الطبقة الخلفية الزخرفية */}
+            <motion.div
+              aria-hidden
+              className="absolute h-full w-full rounded-[32px] bg-gradient-to-br from-brand-100 to-brand-50 blur-[2px]"
+              style={{
+                zIndex: 0,
+                top: reverseLayout ? 'auto' : '8%',
+                bottom: reverseLayout ? '8%' : 'auto',
+                left: reverseLayout ? 'auto' : '-14%',
+                right: reverseLayout ? '-14%' : 'auto',
+              }}
+              initial={reduce ? false : { y: 0 }}
+              whileInView={reduce ? {} : { y: reverseLayout ? -18 : -26 }}
+              transition={{ duration: 1.2, ease: 'easeOut' }}
+              viewport={{ once: true, amount: 0.5 }}
+            />
+
+            {/* البطاقة الرئيسية */}
+            <motion.div
+              className="relative z-10"
+              initial={reduce ? false : { y: 0 }}
+              whileInView={reduce ? {} : { y: reverseLayout ? 18 : 26 }}
+              transition={{ duration: 1.2, ease: 'easeOut', delay: 0.1 }}
+              viewport={{ once: true, amount: 0.5 }}
+            >
+              {children}
+            </motion.div>
+          </motion.div>
+        </motion.div>
+      </div>
+
+      {/* خط متدرّج سفلي */}
+      <div
+        className="absolute bottom-0 left-0 z-0 h-px w-full"
+        style={{
+          background:
+            'radial-gradient(50% 50% at 50% 50%, rgba(15,118,110,0.18) 0%, rgba(15,118,110,0) 100%)',
+        }}
+      />
+    </div>
+  )
+}
+
+/* ———————————————————————————————————————————— */
 
 const STAGES = [
   {
@@ -334,259 +468,39 @@ const STAGES = [
   },
 ]
 
-/* ————————————————————————————————————————————
-   المكوّن الرئيسي — كاروسيل أفقي بـ scroll-snap
-———————————————————————————————————————————— */
-
 export default function PatientJourney() {
   const reduce = useReducedMotion()
-  const scroller = useRef(null)
-  const slides = useRef([])
-  const [step, setStep] = useState(0)
   const [choice, setChoice] = useState(null)
 
-  // تتبّع الشريحة الأقرب لمركز الحاوية
-  const syncStep = useCallback(() => {
-    const box = scroller.current
-    if (!box) return
-    const center = box.getBoundingClientRect().left + box.clientWidth / 2
-    let best = 0
-    let min = Infinity
-    slides.current.forEach((el, i) => {
-      if (!el) return
-      const r = el.getBoundingClientRect()
-      const d = Math.abs(r.left + r.width / 2 - center)
-      if (d < min) {
-        min = d
-        best = i
-      }
-    })
-    setStep(best)
-  }, [])
-
-  useEffect(() => {
-    const box = scroller.current
-    if (!box) return
-    let raf = 0
-    const onScroll = () => {
-      cancelAnimationFrame(raf)
-      raf = requestAnimationFrame(syncStep)
-    }
-    box.addEventListener('scroll', onScroll, { passive: true })
-    syncStep()
-    return () => {
-      box.removeEventListener('scroll', onScroll)
-      cancelAnimationFrame(raf)
-    }
-  }, [syncStep])
-
-  const goTo = (i) => {
-    const n = Math.max(0, Math.min(STAGES.length - 1, i))
-    setStep(n) // تحديث فوري للمؤشّرات، والتمرير يصحّح لاحقاً
-    slides.current[n]?.scrollIntoView({
-      behavior: reduce ? 'auto' : 'smooth',
-      inline: 'center',
-      block: 'nearest',
-    })
-  }
-
-  const onKeyDown = (e) => {
-    if (e.key === 'ArrowLeft') {
-      e.preventDefault()
-      goTo(step + 1) // RTL: يسار = التالي
-    } else if (e.key === 'ArrowRight') {
-      e.preventDefault()
-      goTo(step - 1)
-    }
-  }
-
-  const active = STAGES[step]
-  const HatIcon = active.icon
-
   return (
-    <section id="journey" className="scroll-mt-16 overflow-x-clip pb-20 pt-10 sm:pb-28 sm:pt-14">
-      <div className="mx-auto max-w-6xl px-5">
-        {/* رأس القسم */}
-        <div className="mx-auto max-w-2xl text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-bold text-brand-700">
-            كيف يعمل
-          </span>
-          <h2 className="mt-4 text-2xl text-ink sm:text-3xl">
-            رحلة المريض — من الحجز لاضبارته عند الطبيب
-          </h2>
-          <p className="mt-3 text-sm text-ink-soft sm:text-base">
-            نفس المسار اللي يمشيه كل مريض داخل DocBook. اسحب أو استخدم الأسهم لتشوفه
-            خطوة‑خطوة.
-          </p>
-        </div>
+    <section id="journey" className="scroll-mt-16 overflow-x-clip border-t border-line/70 py-16 sm:py-20">
+      <div className="mx-auto max-w-3xl px-5 text-center">
+        <span className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-bold text-brand-700">
+          كيف يعمل
+        </span>
+        <h2 className="mt-4 text-2xl text-ink sm:text-3xl">
+          رحلة المريض — من الحجز لاضبارته عند الطبيب
+        </h2>
+        <p className="mt-3 text-sm leading-relaxed text-ink-soft sm:text-base">
+          نفس المسار اللي يمشيه كل مريض داخل DocBook — محطّة محطّة.
+        </p>
+      </div>
 
-        {/* مؤشّر القبّعة + رقم المحطّة */}
-        <div className="mt-10 flex items-center justify-center gap-2">
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={active.hat + step}
-              initial={reduce ? false : { opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduce ? { opacity: 0 } : { opacity: 0, y: -6 }}
-              transition={{ duration: 0.2 }}
-              className="inline-flex items-center gap-1.5 rounded-full bg-ink px-3 py-1 text-[11px] font-bold text-white"
-            >
-              <HatIcon className="h-3.5 w-3.5" />
-              {active.hat}
-            </motion.span>
-          </AnimatePresence>
-          <span className="text-[11px] font-medium text-ink-faint">
-            المحطّة {step + 1} / {STAGES.length}
-          </span>
-        </div>
-
-        {/* الكاروسيل */}
-        <div
-          ref={scroller}
-          tabIndex={0}
-          onKeyDown={onKeyDown}
-          role="group"
-          aria-roledescription="carousel"
-          aria-label="رحلة المريض"
-          className="mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 outline-none [-ms-overflow-style:none] [scrollbar-width:none] focus-visible:ring-2 focus-visible:ring-brand-400 [&::-webkit-scrollbar]:hidden"
-        >
-          {STAGES.map((s, i) => {
-            const Icon = s.icon
-            return (
-              <article
-                key={i}
-                ref={(el) => (slides.current[i] = el)}
-                aria-roledescription="slide"
-                aria-label={`المحطّة ${i + 1} من ${STAGES.length}`}
-                className={`w-[86%] shrink-0 snap-center transition-all duration-500 sm:w-[80%] lg:w-[68%] ${
-                  i === step ? 'opacity-100' : 'opacity-40 lg:scale-[0.96]'
-                }`}
-              >
-                <div className="grid items-center gap-8 px-1 py-8 lg:grid-cols-2 lg:gap-4">
-                  {/* الموك المتراكب */}
-                  <div className="relative mx-auto w-full max-w-[380px] lg:max-w-none">
-                    <motion.div
-                      aria-hidden
-                      className="absolute inset-0 z-0 rounded-[28px] bg-gradient-to-br from-brand-100/70 to-brand-50/30 blur-[3px]"
-                      style={{ transform: 'translate(7%, 9%)' }}
-                      initial={reduce ? false : { y: 0, opacity: 0 }}
-                      whileInView={reduce ? {} : { y: -14, opacity: 1 }}
-                      transition={{ duration: 1, ease: EASE }}
-                      viewport={{ once: true, amount: 0.4 }}
-                    />
-                    <motion.div
-                      className="relative z-10"
-                      initial={reduce ? false : { y: 0 }}
-                      whileInView={reduce ? {} : { y: 12 }}
-                      transition={{ duration: 1, ease: EASE, delay: 0.05 }}
-                      viewport={{ once: true, amount: 0.4 }}
-                    >
-                      <Screen step={i} choice={choice} reduce={reduce} />
-                    </motion.div>
-                  </div>
-
-                  {/* النص */}
-                  <div>
-                    <div className="flex items-center gap-3">
-                      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-600 text-white">
-                        <Icon className="h-5 w-5" />
-                      </span>
-                      <div className="text-[11px] font-bold text-ink-faint">
-                        {s.hat} · المحطّة {i + 1}
-                      </div>
-                    </div>
-
-                    <h3 className="mt-3 text-xl font-semibold leading-snug text-ink sm:text-2xl lg:text-[26px]">
-                      {s.title}
-                    </h3>
-
-                    <p className="mt-3 text-sm leading-relaxed text-ink-soft sm:text-[15px]">
-                      {s.body}
-                    </p>
-
-                    {s.branch && (
-                      <>
-                        <div className="mt-4 flex flex-wrap gap-2">
-                          <button
-                            type="button"
-                            onClick={() => setChoice('accept')}
-                            className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-bold transition-all active:scale-95 ${
-                              choice === 'accept'
-                                ? 'bg-brand-600 text-white shadow-sm shadow-brand-600/25'
-                                : 'border border-line bg-paper text-ink hover:border-brand-300'
-                            }`}
-                          >
-                            <CalendarCheck className="h-4 w-4" /> تقبل الموعد
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setChoice('apologize')}
-                            className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-bold transition-all active:scale-95 ${
-                              choice === 'apologize'
-                                ? 'bg-amber-500 text-white shadow-sm shadow-amber-500/25'
-                                : 'border border-line bg-paper text-ink hover:border-amber-300'
-                            }`}
-                          >
-                            <CalendarX2 className="h-4 w-4" /> تعتذر + مواعيد تعويض
-                          </button>
-                        </div>
-                        {choice && (
-                          <p className="mt-3 rounded-lg bg-paper px-3 py-2 text-[13px] text-ink-soft">
-                            {choice === 'accept'
-                              ? 'يتثبّت الموعد بالروزنامة، وتُرسل رسالة تأكيد للمريض عبر واتساب أو SMS بنصّ تعدّله العيادة.'
-                              : 'تُرسل رسالة اعتذار مع مواعيد تعويض بديلة تختارها الممرّضة من الروزنامة — والمريض يختار المناسب له.'}
-                          </p>
-                        )}
-                      </>
-                    )}
-                  </div>
-                </div>
-              </article>
-            )
-          })}
-        </div>
-
-        {/* أدوات التنقّل */}
-        <div className="mt-5 flex items-center justify-center gap-3">
-          <button
-            type="button"
-            onClick={() => goTo(step - 1)}
-            disabled={step === 0}
-            aria-label="المحطّة السابقة"
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-line bg-paper text-ink shadow-sm shadow-slate-200/50 transition-all duration-200 hover:border-brand-300 hover:text-brand-700 hover:shadow-md active:scale-90 disabled:opacity-40 disabled:hover:shadow-sm"
+      <div className="mt-6">
+        {STAGES.map((s, i) => (
+          <SectionWithMockup
+            key={i}
+            hat={s.hat}
+            HatIcon={s.icon}
+            station={i + 1}
+            title={s.title}
+            description={s.body}
+            reverseLayout={i % 2 === 1}
+            branch={s.branch ? <BranchButtons choice={choice} setChoice={setChoice} /> : null}
           >
-            <ArrowRight className="h-4 w-4" />
-          </button>
-
-          <div className="flex items-center gap-0.5">
-            {STAGES.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => goTo(i)}
-                aria-label={`اذهب للمحطّة ${i + 1}`}
-                aria-current={i === step}
-                className="group grid h-9 place-items-center px-1.5"
-              >
-                <span
-                  className={`block h-2 rounded-full transition-all duration-300 ${
-                    i === step ? 'w-6 bg-brand-600' : 'w-2 bg-line group-hover:bg-brand-300'
-                  }`}
-                />
-              </button>
-            ))}
-          </div>
-
-          <button
-            type="button"
-            onClick={() => goTo(step + 1)}
-            disabled={step === STAGES.length - 1}
-            aria-label="المحطّة التالية"
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-line bg-paper text-ink shadow-sm shadow-slate-200/50 transition-all duration-200 hover:border-brand-300 hover:text-brand-700 hover:shadow-md active:scale-90 disabled:opacity-40 disabled:hover:shadow-sm"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </button>
-        </div>
+            <Screen step={i} choice={choice} reduce={reduce} />
+          </SectionWithMockup>
+        ))}
       </div>
     </section>
   )
