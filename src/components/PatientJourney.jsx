@@ -458,31 +458,47 @@ export default function PatientJourney() {
                 ref={(el) => (slides.current[i] = el)}
                 aria-roledescription="slide"
                 aria-label={`المحطّة ${i + 1} من ${STAGES.length}`}
-                className="w-[86%] shrink-0 snap-center sm:w-[78%] lg:w-[66%]"
+                className={`w-[86%] shrink-0 snap-center transition-all duration-500 sm:w-[80%] lg:w-[68%] ${
+                  i === step ? 'opacity-100' : 'opacity-40 lg:scale-[0.96]'
+                }`}
               >
-                <div
-                  className={`grid gap-4 rounded-2xl border p-4 transition-all duration-300 sm:p-5 lg:grid-cols-2 lg:items-center ${
-                    i === step
-                      ? 'border-brand-200 bg-paper shadow-lg shadow-brand-600/10'
-                      : 'border-line bg-canvas/60 opacity-80'
-                  }`}
-                >
-                  <Screen step={i} choice={choice} reduce={reduce} />
+                <div className="grid items-center gap-8 px-1 py-8 lg:grid-cols-2 lg:gap-4">
+                  {/* الموك المتراكب */}
+                  <div className="relative mx-auto w-full max-w-[380px] lg:max-w-none">
+                    <motion.div
+                      aria-hidden
+                      className="absolute inset-0 z-0 rounded-[28px] bg-gradient-to-br from-brand-100/70 to-brand-50/30 blur-[3px]"
+                      style={{ transform: 'translate(7%, 9%)' }}
+                      initial={reduce ? false : { y: 0, opacity: 0 }}
+                      whileInView={reduce ? {} : { y: -14, opacity: 1 }}
+                      transition={{ duration: 1, ease: EASE }}
+                      viewport={{ once: true, amount: 0.4 }}
+                    />
+                    <motion.div
+                      className="relative z-10"
+                      initial={reduce ? false : { y: 0 }}
+                      whileInView={reduce ? {} : { y: 12 }}
+                      transition={{ duration: 1, ease: EASE, delay: 0.05 }}
+                      viewport={{ once: true, amount: 0.4 }}
+                    >
+                      <Screen step={i} choice={choice} reduce={reduce} />
+                    </motion.div>
+                  </div>
 
+                  {/* النص */}
                   <div>
                     <div className="flex items-center gap-3">
                       <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-600 text-white">
                         <Icon className="h-5 w-5" />
                       </span>
-                      <div>
-                        <div className="text-[11px] font-bold text-ink-faint">
-                          {s.hat} · المحطّة {i + 1}
-                        </div>
-                        <h3 className="text-lg font-extrabold text-ink sm:text-xl">
-                          {s.title}
-                        </h3>
+                      <div className="text-[11px] font-bold text-ink-faint">
+                        {s.hat} · المحطّة {i + 1}
                       </div>
                     </div>
+
+                    <h3 className="mt-3 text-xl font-semibold leading-snug text-ink sm:text-2xl lg:text-[26px]">
+                      {s.title}
+                    </h3>
 
                     <p className="mt-3 text-sm leading-relaxed text-ink-soft sm:text-[15px]">
                       {s.body}

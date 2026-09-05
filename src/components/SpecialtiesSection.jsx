@@ -1,13 +1,23 @@
 import { useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { Activity } from 'lucide-react'
-import illustration from '../assets/illustrations/specialties.webp'
+import {
+  Activity,
+  Flower2,
+  Baby,
+  Eye,
+  Smile,
+  HeartPulse,
+  Stethoscope,
+  Hand,
+  Bone,
+} from 'lucide-react'
 
 const EASE = [0.16, 1, 0.3, 1]
 
 const SPECIALTIES = [
   {
     key: 'نسائية',
+    icon: Flower2,
     tool: 'متابعة الحمل',
     metric: 'عمر الحمل يُحسب تلقائياً من LMP',
     fixed: ['GPA', 'Gravida / Parity', 'الإسقاطات', 'القيصريات', 'موانع الحمل'],
@@ -15,6 +25,7 @@ const SPECIALTIES = [
   },
   {
     key: 'أطفال',
+    icon: Baby,
     tool: 'مخطّط النمو',
     metric: 'الوزن والطول ومحيط الرأس على منحنى نموّ',
     fixed: ['الجنس', 'وزن الولادة', 'نوع الولادة', 'الإرضاع', 'اللقاحات', 'ولي الأمر'],
@@ -22,6 +33,7 @@ const SPECIALTIES = [
   },
   {
     key: 'عيون',
+    icon: Eye,
     tool: 'متابعة البصر',
     metric: 'ضغط العين يُرسم فوق نطاق ١٠–٢١ mmHg، والعينان على منحنى واحد',
     fixed: ['سوابق جراحة عينية', 'عدسات لاصقة', 'تاريخ عائلي'],
@@ -29,6 +41,7 @@ const SPECIALTIES = [
   },
   {
     key: 'أسنان',
+    icon: Smile,
     tool: 'مخطّط الأسنان + التقويم',
     metric: 'رسم تفاعلي للأسنان بترقيم FDI، وحالة كل سنّ',
     fixed: ['حساسية أدوية'],
@@ -36,6 +49,7 @@ const SPECIALTIES = [
   },
   {
     key: 'قلبية',
+    icon: HeartPulse,
     tool: 'سجلّ الفحوص القلبية',
     metric: 'ضغط الدم ونتائج الفحوص عبر الزمن',
     fixed: ['تاريخ أمراض القلب', 'الأدوية القلبية'],
@@ -43,6 +57,7 @@ const SPECIALTIES = [
   },
   {
     key: 'باطنية',
+    icon: Stethoscope,
     tool: 'مقارنة القياسات',
     metric: 'ضغط الدم وسكر الدم على منحنى مقارنة',
     fixed: ['عوامل الخطورة', 'الأمراض المزمنة'],
@@ -50,6 +65,7 @@ const SPECIALTIES = [
   },
   {
     key: 'جلدية',
+    icon: Hand,
     tool: 'مقارنة القياسات',
     metric: 'تطوّر الآفة موثّق زيارة بزيارة',
     fixed: ['تاريخ جلدي', 'علاجات سابقة', 'التعرّض للشمس'],
@@ -57,6 +73,7 @@ const SPECIALTIES = [
   },
   {
     key: 'عظمية',
+    icon: Bone,
     tool: 'مقارنة القياسات',
     metric: 'الوظيفة الحركية والألم عبر جلسات المتابعة',
     fixed: ['تاريخ الإصابات', 'العمليات العظمية'],
@@ -118,54 +135,70 @@ export default function SpecialtiesSection() {
   const [i, setI] = useState(0)
   const s = SPECIALTIES[i]
 
+  const rows = [
+    { start: 0, items: SPECIALTIES.slice(0, 3) },
+    { start: 3, items: SPECIALTIES.slice(3, 5) },
+    { start: 5, items: SPECIALTIES.slice(5, 8) },
+  ]
+
   return (
     <section id="specialties" className="scroll-mt-16 border-t border-line/70 py-20 sm:py-28">
       <div className="mx-auto max-w-5xl px-5">
-        <div className="mx-auto max-w-2xl text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-bold text-brand-700">
-            التخصصات
-          </span>
-          <h2 className="mt-4 text-2xl text-ink sm:text-3xl">
-            النظام يتقولب على تخصّصك — مش العكس
-          </h2>
-          <p className="mt-3 text-sm leading-relaxed text-ink-soft sm:text-base">
-            ٨ تخصّصات، كل واحد بخاناته وأداته السريرية الجاهزة من أوّل دخول — قابلة
-            للتعديل. اختر تخصّصاً لتشوف.
-          </p>
-        </div>
+        <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+          {/* النص */}
+          <div className="text-center lg:text-right">
+            <span className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-bold text-brand-700">
+              التخصصات
+            </span>
+            <h2 className="mt-4 text-2xl text-ink sm:text-3xl">
+              النظام يتقولب على تخصّصك — مش العكس
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-ink-soft sm:text-base">
+              ٨ تخصّصات، كل واحد بخاناته وأداته السريرية الجاهزة من أوّل دخول — قابلة
+              للتعديل. اختر تخصّصاً لتشوف تفاصيله.
+            </p>
+          </div>
 
-        <motion.img
-          src={illustration}
-          alt="ملف مريض واحد تتفرّع منه أدوات كل تخصّص — نمو، ضغط عين، أسنان، حمل، ضغط دم"
-          className="mx-auto mt-10 w-full max-w-2xl"
-          loading="lazy"
-          initial={reduce ? false : { opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6, ease: EASE }}
-        />
-
-        {/* مبدّل التخصّص */}
-        <div className="mt-8 flex flex-wrap justify-center gap-2">
-          {SPECIALTIES.map((sp, idx) => (
-            <button
-              key={sp.key}
-              type="button"
-              onClick={() => setI(idx)}
-              aria-pressed={idx === i}
-              className={`rounded-full px-4 py-2 text-sm font-bold transition-colors ${
-                idx === i
-                  ? 'bg-brand-600 text-white'
-                  : 'border border-line bg-paper text-ink-soft hover:border-brand-300 hover:text-brand-700'
-              }`}
-            >
-              {sp.key}
-            </button>
-          ))}
+          {/* عنقود التخصصات */}
+          <div className="mx-auto w-fit" role="group" aria-label="اختيار التخصّص">
+            {rows.map((row, r) => (
+              <div
+                key={r}
+                className={`flex justify-center gap-2 sm:gap-3 ${r > 0 ? 'mt-2 sm:mt-3' : ''}`}
+              >
+                {row.items.map((sp, k) => {
+                  const idx = row.start + k
+                  const Icon = sp.icon
+                  const active = idx === i
+                  return (
+                    <button
+                      key={sp.key}
+                      type="button"
+                      onClick={() => setI(idx)}
+                      aria-pressed={active}
+                      className={`group flex size-[72px] flex-col items-center justify-center gap-1 rounded-xl border transition-all duration-300 sm:size-20 ${
+                        active
+                          ? 'border-brand-500 bg-brand-50 text-brand-700 shadow-md shadow-brand-600/15'
+                          : 'border-line bg-paper text-ink-soft hover:-translate-y-0.5 hover:border-brand-300 hover:text-brand-700 hover:shadow-sm'
+                      }`}
+                    >
+                      <Icon
+                        className={`h-6 w-6 transition-transform duration-300 ${
+                          active ? '' : 'group-hover:scale-110'
+                        }`}
+                        strokeWidth={2}
+                      />
+                      <span className="text-[10px] font-bold leading-none">{sp.key}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* البطاقة */}
-        <div className="mx-auto mt-8 max-w-2xl">
+        <div className="mx-auto mt-10 max-w-2xl">
           <AnimatePresence mode="wait">
             <motion.div
               key={s.key}
