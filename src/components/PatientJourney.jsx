@@ -12,10 +12,9 @@ import {
   ArrowRight,
 } from 'lucide-react'
 import BookingScreen from './journey-screens/BookingScreen'
+import NurseRequestScreen from './journey-screens/NurseRequestScreen'
+import NurseDecisionScreen from './journey-screens/NurseDecisionScreen'
 import './journey-screens/screens.css'
-import requestImg from '../assets/journey/request.webp'
-import acceptImg from '../assets/journey/accept.webp'
-import apologizeImg from '../assets/journey/apologize.webp'
 import calendarImg from '../assets/journey/calendar.webp'
 import chartImg from '../assets/journey/chart.webp'
 import visitImg from '../assets/journey/visit.webp'
@@ -31,7 +30,7 @@ const STAGES = [
   {
     hat: 'الممرّضة',
     icon: ClipboardList,
-    img: requestImg,
+    screen: <NurseRequestScreen />,
     title: 'الطلب يصل الممرّضة',
     body: 'يظهر عندها بحالة «قيد الانتظار» — لا يدخل الروزنامة تلقائياً. تتّصل، تقبل، أو تعتذر — القرار قرارها.',
   },
@@ -39,6 +38,7 @@ const STAGES = [
     hat: 'الممرّضة',
     icon: CalendarCheck,
     branch: true,
+    screenFn: (choice) => <NurseDecisionScreen choice={choice} />,
     title: 'تقبل الموعد أو تعتذر',
     body: 'اختر بنفسك لتشوف الفرعين:',
   },
@@ -103,43 +103,59 @@ function BranchControls({ choice, setChoice }) {
   )
 }
 
-function ScreenFrame({ children, designW = 460, clipH = 470 }) {
-  const ref = useRef(null)
+const FRAME_DESIGN_H = 420 // ارتفاع منطقة الشاشة الموحّد لكل الكروت (بكسل تصميم)
+
+function ScreenFrame({ children, designW = 460 }) {
+  const frameRef = useRef(null)
+  const contentRef = useRef(null)
   const [scale, setScale] = useState(0.74)
+  const [contentH, setContentH] = useState(FRAME_DESIGN_H)
 
   useEffect(() => {
-    const el = ref.current
+    const el = frameRef.current
     if (!el) return
     const ro = new ResizeObserver(([e]) => setScale(e.contentRect.width / designW))
     ro.observe(el)
     return () => ro.disconnect()
   }, [designW])
 
+  useEffect(() => {
+    const el = contentRef.current
+    if (!el) return
+    const ro = new ResizeObserver(() => setContentH(el.offsetHeight))
+    ro.observe(el)
+    setContentH(el.offsetHeight)
+    return () => ro.disconnect()
+  }, [])
+
+  const frameH = Math.round(FRAME_DESIGN_H * scale)
+  const clipped = contentH > FRAME_DESIGN_H
+  const offsetY = clipped ? 0 : Math.max(0, (frameH - contentH * scale) / 2)
+
   return (
-    <div
-      ref={ref}
-      className="relative overflow-hidden bg-white"
-      style={{ height: Math.round(clipH * scale) }}
-    >
+    <div ref={frameRef} className="relative overflow-hidden bg-white" style={{ height: frameH }}>
       <div
+        ref={contentRef}
         className="dbx-screen"
         style={{
           width: designW,
-          padding: '18px 20px 0',
-          transform: `scale(${scale})`,
+          padding: '12px 20px',
+          transform: `translateY(${offsetY}px) scale(${scale})`,
           transformOrigin: 'top right',
         }}
       >
         {children}
       </div>
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white to-transparent" />
+      {clipped && (
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white to-transparent" />
+      )}
     </div>
   )
 }
 
 function JourneyCard({ s, index, active, choice, setChoice }) {
   const Icon = s.icon
-  const img = s.branch ? (choice === 'apologize' ? apologizeImg : acceptImg) : s.img
+  const screenEl = s.screenFn ? s.screenFn(choice) : s.screen
 
   return (
     <div
@@ -150,11 +166,11 @@ function JourneyCard({ s, index, active, choice, setChoice }) {
       }`}
     >
       <div className="border-b border-line bg-canvas">
-        {s.screen ? (
-          <ScreenFrame>{s.screen}</ScreenFrame>
+        {screenEl ? (
+          <ScreenFrame>{screenEl}</ScreenFrame>
         ) : (
           <img
-            src={img}
+            src={s.img}
             alt={s.title}
             loading="lazy"
             className="aspect-[16/10] w-full object-contain"
