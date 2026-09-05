@@ -87,16 +87,16 @@ export default function SummarySection() {
         </div>
 
         {/* CTA ختامي */}
-        <div className="mt-14 overflow-hidden rounded-3xl bg-ink px-6 py-12 text-center text-white sm:py-14">
-          <h3 className="text-xl font-extrabold sm:text-2xl">جاهز تشوفه على عيادتك؟</h3>
-          <p className="mx-auto mt-2 max-w-md text-sm text-white/70">
+        <div className="mt-14 overflow-hidden rounded-3xl border border-brand-200 bg-brand-50 px-6 py-12 text-center sm:py-14">
+          <h3 className="text-xl font-extrabold text-ink sm:text-2xl">جاهز تشوفه على عيادتك؟</h3>
+          <p className="mx-auto mt-2 max-w-md text-sm text-ink-soft">
             احجز عرضاً قصيراً على واتساب — نجهّزلك نسخة ونمشي فيها سوا.
           </p>
           <a
             href={WHATSAPP_LINK}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-brand-500 px-6 py-3 text-sm font-bold text-white transition-transform hover:scale-[1.03] active:scale-95"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-brand-600 px-6 py-3 text-sm font-bold text-white shadow-sm shadow-brand-600/25 transition-transform hover:scale-[1.03] active:scale-95"
           >
             <MessageCircle className="h-4 w-4" />
             احجز عرض على واتساب
