@@ -16,8 +16,8 @@ import NurseRequestScreen from './journey-screens/NurseRequestScreen'
 import NurseDecisionScreen from './journey-screens/NurseDecisionScreen'
 import DoctorProfileScreen from './journey-screens/DoctorProfileScreen'
 import DoctorVisitScreen from './journey-screens/DoctorVisitScreen'
+import DoctorCalendarScreen from './journey-screens/DoctorCalendarScreen'
 import './journey-screens/screens.css'
-import calendarImg from '../assets/journey/calendar.webp'
 
 const STAGES = [
   {
@@ -45,7 +45,8 @@ const STAGES = [
   {
     hat: 'الممرّضة',
     icon: CalendarDays,
-    img: calendarImg,
+    screen: <DoctorCalendarScreen />,
+    designW: 680,
     title: 'الموعد يتثبّت بالروزنامة',
     body: 'لمّا تقبل الممرّضة، الموعد يدخل روزنامة العيادة — يوم وأسبوع — ويصير جاهز ليوم الزيارة.',
   },
@@ -167,7 +168,7 @@ function JourneyCard({ s, index, active, choice, setChoice }) {
     >
       <div className="border-b border-line bg-canvas">
         {screenEl ? (
-          <ScreenFrame>{screenEl}</ScreenFrame>
+          <ScreenFrame designW={s.designW}>{screenEl}</ScreenFrame>
         ) : (
           <img
             src={s.img}
