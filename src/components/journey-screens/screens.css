@@ -1,0 +1,230 @@
+/* ------------------------------------------------------------------
+   ستايل مقتبس حرفياً من كود DocBook الفعلي (simple/booking, nurse, doctor)
+   — بلا أي ربط Firebase/JS. كلّه محصور تحت .dbx-screen حتى لا يتسرّب
+   لباقي الموقع، والتركوازي معدّل من #48b8c2 إلى هوية الموقع #0d9488.
+------------------------------------------------------------------ */
+
+.dbx-screen {
+  font-family: inherit;
+  color: #333;
+  direction: rtl;
+  line-height: 1.5;
+}
+.dbx-screen * {
+  box-sizing: border-box;
+}
+
+/* ── شريط الخطوات ── */
+.dbx-screen .booking-steps-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 20px;
+}
+.dbx-screen .booking-step-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #e0e0e0;
+  background: #fff;
+  color: #999;
+  font-size: 0.78rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.dbx-screen .booking-step-dot.active {
+  border-color: #0d9488;
+  background: #0d9488;
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.15);
+}
+.dbx-screen .booking-step-dot.done {
+  border-color: #16a34a;
+  background: #16a34a;
+  color: #fff;
+}
+.dbx-screen .booking-step-line {
+  flex: 1;
+  height: 2px;
+  background: #e0e0e0;
+  max-width: 56px;
+}
+.dbx-screen .booking-step-line.done {
+  background: #16a34a;
+}
+
+/* ── عناوين الأقسام ── */
+.dbx-screen .booking-section-title {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #0d9488;
+  letter-spacing: 0.04em;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dbx-screen .booking-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1.5px;
+  background: #d0d0d0;
+}
+
+/* ── الحقول ── */
+.dbx-screen .booking-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.dbx-screen .booking-form-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #666;
+}
+.dbx-screen .booking-form-input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid #d0d0d0;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.92rem;
+  color: #333;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ── التقويم ── */
+.dbx-screen .booking-cal-box {
+  background: #f0fdfa;
+  border: 1.5px solid #d0d0d0;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+.dbx-screen .booking-cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.dbx-screen .booking-cal-nav {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  border: 1.5px solid #d0d0d0;
+  background: #fff;
+  color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dbx-screen .booking-cal-month {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #333;
+}
+.dbx-screen .booking-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+.dbx-screen .booking-cal-day-name {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #999;
+  padding: 4px 0;
+}
+.dbx-screen .booking-cal-day {
+  padding: 9px 2px;
+  border-radius: 9px;
+  border: 1.5px solid transparent;
+  background: transparent;
+  color: #333;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: inherit;
+}
+.dbx-screen .booking-cal-day.today {
+  color: #0d9488;
+  border-color: #0d9488;
+  font-weight: 800;
+}
+.dbx-screen .booking-cal-day.selected {
+  background: #0d9488;
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.35);
+}
+.dbx-screen .booking-cal-day.disabled {
+  opacity: 0.3;
+}
+.dbx-screen .booking-cal-day.closed {
+  opacity: 0.35;
+  text-decoration: line-through;
+}
+
+/* ── صندوق التاريخ المختار ── */
+.dbx-screen .booking-selected-date {
+  background: #fef3c7;
+  border: 1.5px solid #fcd34d;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #d97706;
+  text-align: center;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* ── الأزرار ── */
+.dbx-screen .booking-btn-primary {
+  width: 100%;
+  background: #0d9488;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 13px 18px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.dbx-screen .booking-btn-secondary {
+  width: 100%;
+  background: #e2e8f0;
+  color: #475569;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 18px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.dbx-screen .booking-btns-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+.dbx-screen .booking-btns-row > * {
+  flex: 1;
+}

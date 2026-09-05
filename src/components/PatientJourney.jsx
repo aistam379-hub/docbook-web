@@ -11,7 +11,8 @@ import {
   ArrowLeft,
   ArrowRight,
 } from 'lucide-react'
-import bookingImg from '../assets/illustrations/booking.webp'
+import BookingScreen from './journey-screens/BookingScreen'
+import './journey-screens/screens.css'
 import requestImg from '../assets/journey/request.webp'
 import acceptImg from '../assets/journey/accept.webp'
 import apologizeImg from '../assets/journey/apologize.webp'
@@ -23,7 +24,7 @@ const STAGES = [
   {
     hat: 'المريض',
     icon: User,
-    img: bookingImg,
+    screen: <BookingScreen />,
     title: 'المريض يحجز موعده',
     body: 'يفتح رابط الحجز العام — بلا حساب — يختار اليوم والوقت ويؤكّد. الأوقات الماضية والأيام المغلقة لا تظهر أصلاً.',
   },
@@ -102,6 +103,40 @@ function BranchControls({ choice, setChoice }) {
   )
 }
 
+function ScreenFrame({ children, designW = 460, clipH = 470 }) {
+  const ref = useRef(null)
+  const [scale, setScale] = useState(0.74)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const ro = new ResizeObserver(([e]) => setScale(e.contentRect.width / designW))
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [designW])
+
+  return (
+    <div
+      ref={ref}
+      className="relative overflow-hidden bg-white"
+      style={{ height: Math.round(clipH * scale) }}
+    >
+      <div
+        className="dbx-screen"
+        style={{
+          width: designW,
+          padding: '18px 20px 0',
+          transform: `scale(${scale})`,
+          transformOrigin: 'top right',
+        }}
+      >
+        {children}
+      </div>
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white to-transparent" />
+    </div>
+  )
+}
+
 function JourneyCard({ s, index, active, choice, setChoice }) {
   const Icon = s.icon
   const img = s.branch ? (choice === 'apologize' ? apologizeImg : acceptImg) : s.img
@@ -115,12 +150,16 @@ function JourneyCard({ s, index, active, choice, setChoice }) {
       }`}
     >
       <div className="border-b border-line bg-canvas">
-        <img
-          src={img}
-          alt={s.title}
-          loading="lazy"
-          className="aspect-[16/10] w-full object-contain"
-        />
+        {s.screen ? (
+          <ScreenFrame>{s.screen}</ScreenFrame>
+        ) : (
+          <img
+            src={img}
+            alt={s.title}
+            loading="lazy"
+            className="aspect-[16/10] w-full object-contain"
+          />
+        )}
       </div>
 
       <div className="flex flex-1 flex-col p-5">
