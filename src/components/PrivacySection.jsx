@@ -71,9 +71,9 @@ export default function PrivacySection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.5, ease: EASE, delay: reduce ? 0 : i * 0.08 }}
-              className="rounded-2xl border border-line bg-paper p-5"
+              className="group rounded-2xl border border-line bg-paper p-5 shadow-sm shadow-slate-200/40 transition-all duration-300 hover:-translate-y-1 hover:border-brand-200 hover:shadow-lg hover:shadow-brand-600/10"
             >
-              <span className="grid h-10 w-10 place-items-center rounded-xl bg-brand-50 text-brand-700">
+              <span className="grid h-10 w-10 place-items-center rounded-xl bg-brand-50 text-brand-700 transition-all duration-300 group-hover:scale-110 group-hover:bg-brand-600 group-hover:text-white">
                 <Icon className="h-5 w-5" />
               </span>
               <div className="mt-3 text-sm font-extrabold text-ink">{title}</div>

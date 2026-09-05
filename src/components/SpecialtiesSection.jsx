@@ -66,9 +66,9 @@ const SPECIALTIES = [
 
 function ToolCard({ s }) {
   return (
-    <div className="rounded-2xl border border-line bg-paper p-5 shadow-sm">
+    <div className="group rounded-2xl border border-line bg-paper p-5 shadow-sm shadow-slate-200/40 transition-all duration-300 hover:-translate-y-1 hover:border-brand-200 hover:shadow-lg hover:shadow-brand-600/10">
       <div className="flex items-center gap-2">
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700">
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700 transition-all duration-300 group-hover:scale-110 group-hover:bg-brand-600 group-hover:text-white">
           <Activity className="h-4 w-4" />
         </span>
         <div>

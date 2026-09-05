@@ -22,7 +22,7 @@ const EASE = [0.16, 1, 0.3, 1]
 
 function Frame({ label, children }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-line bg-paper shadow-lg shadow-slate-200/50">
+    <div className="overflow-hidden rounded-2xl border border-line bg-paper shadow-xl shadow-slate-300/30 ring-1 ring-black/[0.03]">
       <div className="flex items-center gap-2 border-b border-line px-3 py-2.5">
         <img src={mark} alt="" className="h-5 w-5 rounded-md" />
         <span className="text-[11px] font-bold text-ink-soft">{label}</span>
@@ -460,7 +460,13 @@ export default function PatientJourney() {
                 aria-label={`المحطّة ${i + 1} من ${STAGES.length}`}
                 className="w-[86%] shrink-0 snap-center sm:w-[78%] lg:w-[66%]"
               >
-                <div className="grid gap-4 rounded-2xl border border-line bg-canvas/60 p-4 sm:p-5 lg:grid-cols-2 lg:items-center">
+                <div
+                  className={`grid gap-4 rounded-2xl border p-4 transition-all duration-300 sm:p-5 lg:grid-cols-2 lg:items-center ${
+                    i === step
+                      ? 'border-brand-200 bg-paper shadow-lg shadow-brand-600/10'
+                      : 'border-line bg-canvas/60 opacity-80'
+                  }`}
+                >
                   <Screen step={i} choice={choice} reduce={reduce} />
 
                   <div>
@@ -488,9 +494,9 @@ export default function PatientJourney() {
                           <button
                             type="button"
                             onClick={() => setChoice('accept')}
-                            className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-bold transition-colors ${
+                            className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-bold transition-all active:scale-95 ${
                               choice === 'accept'
-                                ? 'bg-brand-600 text-white'
+                                ? 'bg-brand-600 text-white shadow-sm shadow-brand-600/25'
                                 : 'border border-line bg-paper text-ink hover:border-brand-300'
                             }`}
                           >
@@ -499,9 +505,9 @@ export default function PatientJourney() {
                           <button
                             type="button"
                             onClick={() => setChoice('apologize')}
-                            className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-bold transition-colors ${
+                            className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-bold transition-all active:scale-95 ${
                               choice === 'apologize'
-                                ? 'bg-amber-500 text-white'
+                                ? 'bg-amber-500 text-white shadow-sm shadow-amber-500/25'
                                 : 'border border-line bg-paper text-ink hover:border-amber-300'
                             }`}
                           >
@@ -531,7 +537,7 @@ export default function PatientJourney() {
             onClick={() => goTo(step - 1)}
             disabled={step === 0}
             aria-label="المحطّة السابقة"
-            className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-line bg-paper text-ink transition-colors hover:border-brand-300 disabled:opacity-40"
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-line bg-paper text-ink shadow-sm shadow-slate-200/50 transition-all duration-200 hover:border-brand-300 hover:text-brand-700 hover:shadow-md active:scale-90 disabled:opacity-40 disabled:hover:shadow-sm"
           >
             <ArrowRight className="h-4 w-4" />
           </button>
@@ -544,11 +550,11 @@ export default function PatientJourney() {
                 onClick={() => goTo(i)}
                 aria-label={`اذهب للمحطّة ${i + 1}`}
                 aria-current={i === step}
-                className="grid h-9 place-items-center px-1.5"
+                className="group grid h-9 place-items-center px-1.5"
               >
                 <span
-                  className={`block h-2 rounded-full transition-all ${
-                    i === step ? 'w-6 bg-brand-600' : 'w-2 bg-line'
+                  className={`block h-2 rounded-full transition-all duration-300 ${
+                    i === step ? 'w-6 bg-brand-600' : 'w-2 bg-line group-hover:bg-brand-300'
                   }`}
                 />
               </button>
@@ -560,7 +566,7 @@ export default function PatientJourney() {
             onClick={() => goTo(step + 1)}
             disabled={step === STAGES.length - 1}
             aria-label="المحطّة التالية"
-            className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-line bg-paper text-ink transition-colors hover:border-brand-300 disabled:opacity-40"
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-line bg-paper text-ink shadow-sm shadow-slate-200/50 transition-all duration-200 hover:border-brand-300 hover:text-brand-700 hover:shadow-md active:scale-90 disabled:opacity-40 disabled:hover:shadow-sm"
           >
             <ArrowLeft className="h-4 w-4" />
           </button>

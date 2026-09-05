@@ -71,7 +71,7 @@ export default function SummarySection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.5, ease: EASE, delay: reduce ? 0 : (i % 3) * 0.07 }}
-              className="rounded-2xl border border-line bg-paper p-5"
+              className="group rounded-2xl border border-line bg-paper p-5 shadow-sm shadow-slate-200/40 transition-all duration-300 hover:-translate-y-1 hover:border-brand-200 hover:shadow-lg hover:shadow-brand-600/10"
             >
               <div className="text-sm font-extrabold text-brand-700">{g.title}</div>
               <ul className="mt-3 space-y-2">

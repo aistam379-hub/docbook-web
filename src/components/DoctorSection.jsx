@@ -169,8 +169,12 @@ export default function DoctorSection() {
 
             <ul className="mt-6 space-y-3">
               {POINTS.map(({ icon: Icon, title, body }) => (
-                <motion.li key={title} variants={item} className="flex gap-3">
-                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700">
+                <motion.li
+                  key={title}
+                  variants={item}
+                  className="group -mx-2.5 flex gap-3 rounded-xl p-2.5 transition-colors duration-200 hover:bg-brand-50/60"
+                >
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700 transition-all duration-300 group-hover:scale-110 group-hover:bg-brand-600 group-hover:text-white">
                     <Icon className="h-4 w-4" strokeWidth={2} />
                   </span>
                   <div>
