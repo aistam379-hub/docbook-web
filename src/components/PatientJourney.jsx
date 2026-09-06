@@ -154,40 +154,35 @@ function ScreenFrame({ children, designW = 460 }) {
   )
 }
 
+/* نمط الكرت من hyperui/marketing/cards/1.html + سلّم الخطوط من نفس المكتبة */
 function JourneyNote({ s, index, choice, setChoice, reduce }) {
   const Icon = s.icon
   const screenEl = s.screenFn ? s.screenFn(choice) : s.screen
 
   return (
-    <motion.div
-      className="relative w-full sm:[&:nth-child(even)]:mt-16"
-      initial={reduce ? false : { opacity: 0, y: 14 }}
+    <motion.article
+      className="rounded-xl border border-line bg-paper p-4 shadow-sm"
+      initial={reduce ? false : { opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.25 }}
-      transition={{ duration: 0.5, ease: EASE }}
+      transition={{ duration: 0.45, ease: EASE }}
     >
-      {/* الدبّوس */}
-      <span aria-hidden className="absolute -top-3 right-6 z-10">
-        <span className="block h-3 w-3 rounded-full bg-brand-500" />
-        <span className="mx-auto mt-0.5 block h-2 w-px bg-brand-300" />
-      </span>
-
-      <div className="flex items-baseline gap-2">
-        <span className="text-2xl font-extrabold leading-none text-brand-300">{NUMS[index]}</span>
-        <h3 className="text-[15px] font-extrabold text-ink">{s.title}</h3>
+      <div className="flex items-center gap-1.5 text-xs font-medium text-ink-faint">
+        <Icon className="size-3.5" />
+        <span>
+          المحطّة {NUMS[index]} · {s.hat}
+        </span>
       </div>
-      <span className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2 py-0.5 text-[10px] font-bold text-brand-700">
-        <Icon className="h-2.5 w-2.5" />
-        {s.hat}
-      </span>
 
-      <div className="mt-2.5 overflow-hidden rounded-lg border border-line bg-paper">
+      <h3 className="mt-1 text-base font-semibold text-ink">{s.title}</h3>
+
+      <div className="mt-3 overflow-hidden rounded-lg border border-line">
         <ScreenFrame designW={s.designW}>{screenEl}</ScreenFrame>
       </div>
 
-      <p className="mt-2.5 text-[12px] leading-relaxed text-ink-soft">{s.body}</p>
+      <p className="mt-3 text-sm leading-relaxed text-ink-soft">{s.body}</p>
       {s.branch && <BranchControls choice={choice} setChoice={setChoice} />}
-    </motion.div>
+    </motion.article>
   )
 }
 
@@ -212,14 +207,8 @@ export default function PatientJourney() {
         </p>
       </div>
 
-      <div
-        className="mx-auto mt-12 max-w-4xl px-5"
-        style={{
-          backgroundImage:
-            'repeating-linear-gradient(to bottom, transparent 0 39px, rgba(148,163,184,0.10) 39px 40px)',
-        }}
-      >
-        <div className="grid grid-cols-1 gap-x-10 gap-y-12 sm:grid-cols-2">
+      <div className="mx-auto mt-10 max-w-4xl px-5">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           {STAGES.map((s, i) => (
             <JourneyNote
               key={i}
