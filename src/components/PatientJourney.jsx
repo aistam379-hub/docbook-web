@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { useReducedMotion } from 'framer-motion'
+import { Fragment, useEffect, useRef, useState } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
 import {
   User,
   ClipboardList,
@@ -8,8 +8,6 @@ import {
   CalendarDays,
   FolderOpen,
   Activity,
-  ArrowLeft,
-  ArrowRight,
 } from 'lucide-react'
 import BookingScreen from './journey-screens/BookingScreen'
 import NurseRequestScreen from './journey-screens/NurseRequestScreen'
@@ -18,6 +16,9 @@ import DoctorProfileScreen from './journey-screens/DoctorProfileScreen'
 import DoctorVisitScreen from './journey-screens/DoctorVisitScreen'
 import DoctorCalendarScreen from './journey-screens/DoctorCalendarScreen'
 import './journey-screens/screens.css'
+
+const EASE = [0.16, 1, 0.3, 1]
+const NUMS = ['٠١', '٠٢', '٠٣', '٠٤', '٠٥', '٠٦']
 
 const STAGES = [
   {
@@ -73,9 +74,9 @@ function BranchControls({ choice, setChoice }) {
         <button
           type="button"
           onClick={() => setChoice('accept')}
-          className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[13px] font-bold transition-all active:scale-95 ${
+          className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[13px] font-bold transition-colors ${
             choice === 'accept'
-              ? 'bg-brand-600 text-white shadow-sm shadow-brand-600/25'
+              ? 'bg-brand-600 text-white'
               : 'border border-line bg-paper text-ink hover:border-brand-300'
           }`}
         >
@@ -84,9 +85,9 @@ function BranchControls({ choice, setChoice }) {
         <button
           type="button"
           onClick={() => setChoice('apologize')}
-          className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[13px] font-bold transition-all active:scale-95 ${
+          className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[13px] font-bold transition-colors ${
             choice === 'apologize'
-              ? 'bg-amber-500 text-white shadow-sm shadow-amber-500/25'
+              ? 'bg-amber-500 text-white'
               : 'border border-line bg-paper text-ink hover:border-amber-300'
           }`}
         >
@@ -129,9 +130,8 @@ function ScreenFrame({ children, designW = 460 }) {
     return () => ro.disconnect()
   }, [])
 
-  const frameH = Math.round(FRAME_DESIGN_H * scale)
   const clipped = contentH > FRAME_DESIGN_H
-  const offsetY = clipped ? 0 : Math.max(0, (frameH - contentH * scale) / 2)
+  const frameH = Math.round(Math.min(contentH, FRAME_DESIGN_H) * scale)
 
   return (
     <div ref={frameRef} className="relative overflow-hidden bg-white" style={{ height: frameH }}>
@@ -141,7 +141,7 @@ function ScreenFrame({ children, designW = 460 }) {
         style={{
           width: designW,
           padding: '12px 20px',
-          transform: `translateY(${offsetY}px) scale(${scale})`,
+          transform: `scale(${scale})`,
           transformOrigin: 'top right',
         }}
       >
@@ -154,200 +154,112 @@ function ScreenFrame({ children, designW = 460 }) {
   )
 }
 
-function JourneyCard({ s, index, active, choice, setChoice }) {
+/* خط منقّط يربط محطّة بالتالية — منحنى على الديسكتوب، عمودي على الموبايل */
+function Connector({ leftToRight }) {
+  const d = leftToRight
+    ? 'M 200 2 C 200 46, 440 26, 440 70'
+    : 'M 440 2 C 440 46, 200 26, 200 70'
+  return (
+    <div className="my-1 flex w-full justify-center">
+      <div className="h-7 border-l-2 border-dashed border-line sm:hidden" />
+      <svg
+        viewBox="0 0 640 72"
+        preserveAspectRatio="xMidYMid meet"
+        className="hidden h-16 w-full max-w-2xl sm:block"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d={d}
+          stroke="#cbd5e1"
+          strokeWidth="1.5"
+          strokeDasharray="4 5"
+          strokeLinecap="round"
+        />
+      </svg>
+    </div>
+  )
+}
+
+function JourneyNote({ s, index, choice, setChoice, reduce }) {
   const Icon = s.icon
   const screenEl = s.screenFn ? s.screenFn(choice) : s.screen
+  const side = index % 2 === 0 ? 'sm:self-start' : 'sm:self-end'
 
   return (
-    <div
-      className={`flex h-full flex-col overflow-hidden rounded-2xl border bg-paper transition-all duration-300 ${
-        active
-          ? 'border-brand-200 shadow-lg shadow-brand-600/10'
-          : 'border-line shadow-sm shadow-slate-200/50'
-      }`}
+    <motion.div
+      className={`relative w-full max-w-[400px] self-center ${side}`}
+      initial={reduce ? false : { opacity: 0, y: 14 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: 0.5, ease: EASE }}
     >
-      <div className="border-b border-line bg-canvas">
-        {screenEl ? (
-          <ScreenFrame designW={s.designW}>{screenEl}</ScreenFrame>
-        ) : (
-          <img
-            src={s.img}
-            alt={s.title}
-            loading="lazy"
-            className="aspect-[16/10] w-full object-contain"
-          />
-        )}
-      </div>
+      {/* الدبّوس */}
+      <span aria-hidden className="absolute -top-3 left-1/2 z-10 -translate-x-1/2">
+        <span className="block h-3.5 w-3.5 rounded-full bg-brand-500" />
+        <span className="mx-auto mt-0.5 block h-2.5 w-px bg-brand-300" />
+      </span>
 
-      <div className="flex flex-1 flex-col p-5">
-        <div className="flex items-center gap-2">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-brand-600 text-white">
-            <Icon className="h-4 w-4" />
-          </span>
-          <div className="text-[11px] font-bold text-ink-faint">
-            {s.hat} · المحطّة {index + 1}
-          </div>
+      <div className="rounded-2xl border border-line bg-paper p-5">
+        <div className="text-4xl font-extrabold leading-none text-brand-300">{NUMS[index]}</div>
+        <h3 className="mt-2 text-lg font-extrabold text-ink">{s.title}</h3>
+        <span className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-bold text-brand-700">
+          <Icon className="h-3 w-3" />
+          {s.hat}
+        </span>
+
+        <div className="mt-3 overflow-hidden rounded-xl border border-line">
+          <ScreenFrame designW={s.designW}>{screenEl}</ScreenFrame>
         </div>
 
-        <h3 className="mt-3 text-lg font-extrabold text-ink">{s.title}</h3>
-        <p className="mt-2 text-[13px] leading-relaxed text-ink-soft">{s.body}</p>
-
+        <p className="mt-3 text-[13px] leading-relaxed text-ink-soft">{s.body}</p>
         {s.branch && <BranchControls choice={choice} setChoice={setChoice} />}
       </div>
-    </div>
+    </motion.div>
   )
 }
 
 export default function PatientJourney() {
   const reduce = useReducedMotion()
-  const scroller = useRef(null)
-  const slides = useRef([])
-  const [step, setStep] = useState(0)
   const [choice, setChoice] = useState(null)
-
-  const syncStep = useCallback(() => {
-    const box = scroller.current
-    if (!box) return
-    const center = box.getBoundingClientRect().left + box.clientWidth / 2
-    let best = 0
-    let min = Infinity
-    slides.current.forEach((el, i) => {
-      if (!el) return
-      const r = el.getBoundingClientRect()
-      const d = Math.abs(r.left + r.width / 2 - center)
-      if (d < min) {
-        min = d
-        best = i
-      }
-    })
-    setStep(best)
-  }, [])
-
-  useEffect(() => {
-    const box = scroller.current
-    if (!box) return
-    let raf = 0
-    const onScroll = () => {
-      cancelAnimationFrame(raf)
-      raf = requestAnimationFrame(syncStep)
-    }
-    box.addEventListener('scroll', onScroll, { passive: true })
-    syncStep()
-    return () => {
-      box.removeEventListener('scroll', onScroll)
-      cancelAnimationFrame(raf)
-    }
-  }, [syncStep])
-
-  const goTo = (i) => {
-    const n = Math.max(0, Math.min(STAGES.length - 1, i))
-    setStep(n)
-    slides.current[n]?.scrollIntoView({
-      behavior: reduce ? 'auto' : 'smooth',
-      inline: 'center',
-      block: 'nearest',
-    })
-  }
-
-  const onKeyDown = (e) => {
-    if (e.key === 'ArrowLeft') {
-      e.preventDefault()
-      goTo(step + 1)
-    } else if (e.key === 'ArrowRight') {
-      e.preventDefault()
-      goTo(step - 1)
-    }
-  }
 
   return (
     <section
       id="journey"
       className="scroll-mt-16 overflow-x-clip border-t border-line/70 py-20 sm:py-28"
     >
-      <div className="mx-auto max-w-6xl px-5">
-        <div className="mx-auto max-w-2xl text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-bold text-brand-700">
-            كيف يعمل
-          </span>
-          <h2 className="mt-4 text-2xl text-ink sm:text-3xl">
-            رحلة المريض — من الحجز لاضبارته عند الطبيب
-          </h2>
-          <p className="mt-3 text-sm text-ink-soft sm:text-base">
-            نفس المسار اللي يمشيه كل مريض داخل DocBook. اسحب أو استخدم الأسهم لتشوفه
-            محطّة‑محطّة.
-          </p>
-        </div>
+      <div className="mx-auto max-w-2xl px-5 text-center">
+        <span className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-bold text-brand-700">
+          كيف يعمل
+        </span>
+        <h2 className="mt-4 text-2xl text-ink sm:text-3xl">
+          رحلة المريض — من الحجز لاضبارته عند الطبيب
+        </h2>
+        <p className="mt-3 text-sm text-ink-soft sm:text-base">
+          نفس المسار اللي يمشيه كل مريض داخل DocBook — محطّة‑محطّة.
+        </p>
+      </div>
 
-        <div
-          ref={scroller}
-          tabIndex={0}
-          onKeyDown={onKeyDown}
-          role="group"
-          aria-roledescription="carousel"
-          aria-label="رحلة المريض"
-          className="mt-10 flex snap-x snap-mandatory items-stretch gap-4 overflow-x-auto px-[7%] pb-3 outline-none [-ms-overflow-style:none] [scrollbar-width:none] focus-visible:ring-2 focus-visible:ring-brand-400 sm:px-[max(0px,calc((100%-340px)/2))] lg:px-[calc((100%-370px)/2)] [&::-webkit-scrollbar]:hidden"
-        >
+      <div
+        className="mx-auto mt-12 max-w-2xl px-5"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(to bottom, transparent 0 39px, rgba(148,163,184,0.10) 39px 40px)',
+        }}
+      >
+        <div className="flex flex-col">
           {STAGES.map((s, i) => (
-            <article
-              key={i}
-              ref={(el) => (slides.current[i] = el)}
-              aria-roledescription="slide"
-              aria-label={`المحطّة ${i + 1} من ${STAGES.length}`}
-              className={`w-[86%] shrink-0 snap-center transition-all duration-500 sm:w-[340px] lg:w-[370px] ${
-                i === step ? 'blur-0 opacity-100' : 'scale-[0.92] opacity-50 blur-[3px]'
-              }`}
-            >
-              <JourneyCard
+            <Fragment key={i}>
+              {i > 0 && <Connector leftToRight={i % 2 === 1} />}
+              <JourneyNote
                 s={s}
                 index={i}
-                active={i === step}
                 choice={choice}
                 setChoice={setChoice}
+                reduce={reduce}
               />
-            </article>
+            </Fragment>
           ))}
-        </div>
-
-        {/* أدوات التنقّل */}
-        <div className="mt-5 flex items-center justify-center gap-3">
-          <button
-            type="button"
-            onClick={() => goTo(step - 1)}
-            disabled={step === 0}
-            aria-label="المحطّة السابقة"
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-line bg-paper text-ink shadow-sm shadow-slate-200/50 transition-all duration-200 hover:border-brand-300 hover:text-brand-700 hover:shadow-md active:scale-90 disabled:opacity-40 disabled:hover:shadow-sm"
-          >
-            <ArrowRight className="h-4 w-4" />
-          </button>
-
-          <div className="flex items-center gap-0.5">
-            {STAGES.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => goTo(i)}
-                aria-label={`اذهب للمحطّة ${i + 1}`}
-                aria-current={i === step}
-                className="group grid h-9 place-items-center px-1.5"
-              >
-                <span
-                  className={`block h-2 rounded-full transition-all duration-300 ${
-                    i === step ? 'w-6 bg-brand-600' : 'w-2 bg-line group-hover:bg-brand-300'
-                  }`}
-                />
-              </button>
-            ))}
-          </div>
-
-          <button
-            type="button"
-            onClick={() => goTo(step + 1)}
-            disabled={step === STAGES.length - 1}
-            aria-label="المحطّة التالية"
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-line bg-paper text-ink shadow-sm shadow-slate-200/50 transition-all duration-200 hover:border-brand-300 hover:text-brand-700 hover:shadow-md active:scale-90 disabled:opacity-40 disabled:hover:shadow-sm"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </button>
         </div>
       </div>
     </section>
