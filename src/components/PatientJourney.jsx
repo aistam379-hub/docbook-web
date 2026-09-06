@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import {
   User,
@@ -105,7 +105,7 @@ function BranchControls({ choice, setChoice }) {
   )
 }
 
-const FRAME_DESIGN_H = 420 // ارتفاع منطقة الشاشة الموحّد لكل الكروت (بكسل تصميم)
+const FRAME_DESIGN_H = 300 // أقصى ارتفاع لمنطقة الشاشة (بكسل تصميم)
 
 function ScreenFrame({ children, designW = 460 }) {
   const frameRef = useRef(null)
@@ -154,67 +154,39 @@ function ScreenFrame({ children, designW = 460 }) {
   )
 }
 
-/* خط منقّط يربط محطّة بالتالية — منحنى على الديسكتوب، عمودي على الموبايل */
-function Connector({ leftToRight }) {
-  const d = leftToRight
-    ? 'M 200 2 C 200 46, 440 26, 440 70'
-    : 'M 440 2 C 440 46, 200 26, 200 70'
-  return (
-    <div className="my-1 flex w-full justify-center">
-      <div className="h-7 border-l-2 border-dashed border-line sm:hidden" />
-      <svg
-        viewBox="0 0 640 72"
-        preserveAspectRatio="xMidYMid meet"
-        className="hidden h-16 w-full max-w-2xl sm:block"
-        fill="none"
-        aria-hidden="true"
-      >
-        <path
-          d={d}
-          stroke="#cbd5e1"
-          strokeWidth="1.5"
-          strokeDasharray="4 5"
-          strokeLinecap="round"
-        />
-      </svg>
-    </div>
-  )
-}
-
 function JourneyNote({ s, index, choice, setChoice, reduce }) {
   const Icon = s.icon
   const screenEl = s.screenFn ? s.screenFn(choice) : s.screen
-  const side = index % 2 === 0 ? 'sm:self-start' : 'sm:self-end'
 
   return (
     <motion.div
-      className={`relative w-full max-w-[400px] self-center ${side}`}
+      className="relative w-full sm:[&:nth-child(even)]:mt-16"
       initial={reduce ? false : { opacity: 0, y: 14 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
+      viewport={{ once: true, amount: 0.25 }}
       transition={{ duration: 0.5, ease: EASE }}
     >
       {/* الدبّوس */}
-      <span aria-hidden className="absolute -top-3 left-1/2 z-10 -translate-x-1/2">
-        <span className="block h-3.5 w-3.5 rounded-full bg-brand-500" />
-        <span className="mx-auto mt-0.5 block h-2.5 w-px bg-brand-300" />
+      <span aria-hidden className="absolute -top-3 right-6 z-10">
+        <span className="block h-3 w-3 rounded-full bg-brand-500" />
+        <span className="mx-auto mt-0.5 block h-2 w-px bg-brand-300" />
       </span>
 
-      <div className="rounded-2xl border border-line bg-paper p-5">
-        <div className="text-4xl font-extrabold leading-none text-brand-300">{NUMS[index]}</div>
-        <h3 className="mt-2 text-lg font-extrabold text-ink">{s.title}</h3>
-        <span className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-bold text-brand-700">
-          <Icon className="h-3 w-3" />
-          {s.hat}
-        </span>
-
-        <div className="mt-3 overflow-hidden rounded-xl border border-line">
-          <ScreenFrame designW={s.designW}>{screenEl}</ScreenFrame>
-        </div>
-
-        <p className="mt-3 text-[13px] leading-relaxed text-ink-soft">{s.body}</p>
-        {s.branch && <BranchControls choice={choice} setChoice={setChoice} />}
+      <div className="flex items-baseline gap-2">
+        <span className="text-2xl font-extrabold leading-none text-brand-300">{NUMS[index]}</span>
+        <h3 className="text-[15px] font-extrabold text-ink">{s.title}</h3>
       </div>
+      <span className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2 py-0.5 text-[10px] font-bold text-brand-700">
+        <Icon className="h-2.5 w-2.5" />
+        {s.hat}
+      </span>
+
+      <div className="mt-2.5 overflow-hidden rounded-lg border border-line bg-paper">
+        <ScreenFrame designW={s.designW}>{screenEl}</ScreenFrame>
+      </div>
+
+      <p className="mt-2.5 text-[12px] leading-relaxed text-ink-soft">{s.body}</p>
+      {s.branch && <BranchControls choice={choice} setChoice={setChoice} />}
     </motion.div>
   )
 }
@@ -241,24 +213,22 @@ export default function PatientJourney() {
       </div>
 
       <div
-        className="mx-auto mt-12 max-w-2xl px-5"
+        className="mx-auto mt-12 max-w-4xl px-5"
         style={{
           backgroundImage:
             'repeating-linear-gradient(to bottom, transparent 0 39px, rgba(148,163,184,0.10) 39px 40px)',
         }}
       >
-        <div className="flex flex-col">
+        <div className="grid grid-cols-1 gap-x-10 gap-y-12 sm:grid-cols-2">
           {STAGES.map((s, i) => (
-            <Fragment key={i}>
-              {i > 0 && <Connector leftToRight={i % 2 === 1} />}
-              <JourneyNote
-                s={s}
-                index={i}
-                choice={choice}
-                setChoice={setChoice}
-                reduce={reduce}
-              />
-            </Fragment>
+            <JourneyNote
+              key={i}
+              s={s}
+              index={i}
+              choice={choice}
+              setChoice={setChoice}
+              reduce={reduce}
+            />
           ))}
         </div>
       </div>
