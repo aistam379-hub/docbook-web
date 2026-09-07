@@ -115,7 +115,9 @@ function ScreenFrame({ children, designW = 460 }) {
   useEffect(() => {
     const el = frameRef.current
     if (!el) return
-    const ro = new ResizeObserver(([e]) => setScale(e.contentRect.width / designW))
+    const ro = new ResizeObserver(([e]) =>
+      setScale(Math.min(1, e.contentRect.width / designW)),
+    )
     ro.observe(el)
     return () => ro.disconnect()
   }, [designW])
@@ -136,8 +138,9 @@ function ScreenFrame({ children, designW = 460 }) {
         className="dbx-screen"
         style={{
           width: designW,
+          marginInline: 'auto',
           transform: `scale(${scale})`,
-          transformOrigin: 'top right',
+          transformOrigin: 'top center',
         }}
       >
         {children}
@@ -151,18 +154,27 @@ function JourneyNote({ s, index, choice, setChoice, reduce }) {
   const Icon = s.icon
   const screenEl = s.screenFn ? s.screenFn(choice) : s.screen
 
+  const last = index === STAGES.length - 1
+
   return (
-    <motion.article
+    <motion.li
+      className={`relative ps-11 sm:ps-14 ${last ? '' : 'pb-12 sm:pb-16'}`}
       initial={reduce ? false : { opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.25 }}
+      viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.45, ease: EASE }}
     >
-      <div className="flex items-center gap-1.5 text-xs font-medium text-ink-faint">
+      {/* العقدة على الخط */}
+      <span
+        aria-hidden
+        className="absolute start-0 top-0 grid size-8 place-items-center rounded-full bg-brand-600 text-[11px] font-bold text-white sm:size-9 sm:text-xs"
+      >
+        {NUMS[index]}
+      </span>
+
+      <div className="flex items-center gap-1.5 pt-1.5 text-xs font-medium text-ink-faint">
         <Icon className="size-3.5" />
-        <span>
-          المحطّة {NUMS[index]} · {s.hat}
-        </span>
+        <span>{s.hat}</span>
       </div>
 
       <h3 className="mt-1 text-base font-semibold text-ink">{s.title}</h3>
@@ -173,7 +185,7 @@ function JourneyNote({ s, index, choice, setChoice, reduce }) {
 
       <p className="mt-3 text-sm leading-relaxed text-ink-soft">{s.body}</p>
       {s.branch && <BranchControls choice={choice} setChoice={setChoice} />}
-    </motion.article>
+    </motion.li>
   )
 }
 
@@ -198,8 +210,13 @@ export default function PatientJourney() {
         </p>
       </div>
 
-      <div className="mx-auto mt-10 max-w-4xl px-5">
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+      <div className="mx-auto mt-12 max-w-2xl px-5">
+        <ol className="relative">
+          {/* خط الرحلة */}
+          <span
+            aria-hidden
+            className="absolute inset-y-0 start-[15px] w-px bg-line sm:start-[17px]"
+          />
           {STAGES.map((s, i) => (
             <JourneyNote
               key={i}
@@ -210,7 +227,7 @@ export default function PatientJourney() {
               reduce={reduce}
             />
           ))}
-        </div>
+        </ol>
       </div>
     </section>
   )
