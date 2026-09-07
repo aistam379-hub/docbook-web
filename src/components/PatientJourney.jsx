@@ -105,13 +105,12 @@ function BranchControls({ choice, setChoice }) {
   )
 }
 
-const FRAME_DESIGN_H = 300 // أقصى ارتفاع لمنطقة الشاشة (بكسل تصميم)
-
+/* تُعرض شاشة التطبيق كاملة بإطارها الأصلي — تُصغَّر لعرض العمود بلا قصّ */
 function ScreenFrame({ children, designW = 460 }) {
   const frameRef = useRef(null)
   const contentRef = useRef(null)
-  const [scale, setScale] = useState(0.74)
-  const [contentH, setContentH] = useState(FRAME_DESIGN_H)
+  const [scale, setScale] = useState(0.8)
+  const [contentH, setContentH] = useState(0)
 
   useEffect(() => {
     const el = frameRef.current
@@ -130,26 +129,19 @@ function ScreenFrame({ children, designW = 460 }) {
     return () => ro.disconnect()
   }, [])
 
-  const clipped = contentH > FRAME_DESIGN_H
-  const frameH = Math.round(Math.min(contentH, FRAME_DESIGN_H) * scale)
-
   return (
-    <div ref={frameRef} className="relative overflow-hidden bg-white" style={{ height: frameH }}>
+    <div ref={frameRef} className="relative" style={{ height: Math.round(contentH * scale) }}>
       <div
         ref={contentRef}
         className="dbx-screen"
         style={{
           width: designW,
-          padding: '12px 20px',
           transform: `scale(${scale})`,
           transformOrigin: 'top right',
         }}
       >
         {children}
       </div>
-      {clipped && (
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white to-transparent" />
-      )}
     </div>
   )
 }
@@ -161,7 +153,6 @@ function JourneyNote({ s, index, choice, setChoice, reduce }) {
 
   return (
     <motion.article
-      className="rounded-xl border border-line bg-paper p-4 shadow-sm"
       initial={reduce ? false : { opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.25 }}
@@ -176,7 +167,7 @@ function JourneyNote({ s, index, choice, setChoice, reduce }) {
 
       <h3 className="mt-1 text-base font-semibold text-ink">{s.title}</h3>
 
-      <div className="mt-3 overflow-hidden rounded-lg border border-line">
+      <div className="mt-3">
         <ScreenFrame designW={s.designW}>{screenEl}</ScreenFrame>
       </div>
 
